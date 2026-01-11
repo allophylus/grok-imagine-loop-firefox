@@ -144,18 +144,29 @@ if (window.GrokLoopInjected) {
                 console.log('In Post View. Navigation is required to upload next image.');
                 closeButton.click();
                 await new Promise(r => setTimeout(r, 1500));
+
+                // Check if input appeared after navigation
+                fileInput = document.querySelector('input[type="file"]');
+                if (fileInput) console.log('File input found after navigation.');
             }
 
-            // Re-scan
-            const buttons = Array.from(document.querySelectorAll('button'));
-            const uploadTrigger = buttons.find(b => {
-                const label = (b.ariaLabel || b.title || '').toLowerCase();
-                return label.includes('upload') || label.includes('image') || label.includes('photo') || label.includes('add');
-            });
-            if (uploadTrigger) {
-                uploadTrigger.click();
-                await new Promise(r => setTimeout(r, 500));
-                fileInput = document.querySelector('input[type="file"]');
+            // Only try to find/click the upload button if we STILL don't have the input
+            if (!fileInput) {
+                // Re-scan
+                const buttons = Array.from(document.querySelectorAll('button'));
+                const uploadTrigger = buttons.find(b => {
+                    const label = (b.ariaLabel || b.title || '').toLowerCase();
+                    return label.includes('upload') || label.includes('image') || label.includes('photo') || label.includes('add');
+                });
+
+                if (uploadTrigger) {
+                    // Try to avoid clicking if it looks like the main "Upload" button which opens dialog
+                    // But if we must...
+                    console.log('Clicking upload trigger to reveal input...');
+                    uploadTrigger.click();
+                    await new Promise(r => setTimeout(r, 500));
+                    fileInput = document.querySelector('input[type="file"]');
+                }
             }
         }
 
