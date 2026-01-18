@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reuseInitialImageInput = document.getElementById('reuseInitialImage');
     const showDashboardInput = document.getElementById('showDashboard');
     const birthYearInput = document.getElementById('birthYear');
+    const globalPromptInput = document.getElementById('globalPrompt');
     const continueOnFailureInput = document.getElementById('continueOnFailure');
     const pauseOnModerationInput = document.getElementById('pauseOnModeration');
     const upscaleInput = document.getElementById('upscale');
@@ -204,7 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     reuseInitialImage: reuseInitialImageInput.checked,
                     continueOnFailure: continueOnFailureInput.checked,
                     pauseOnModeration: pauseOnModerationInput.checked,
-                    birthYear: birthYearInput.value
+                    birthYear: birthYearInput.value,
+                    globalPrompt: globalPromptInput.value
                 },
                 scenes: scenes.map(s => ({
                     prompt: s.prompt,
@@ -246,9 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inject Version
     const manifestVersion = chrome.runtime.getManifest().version;
     try {
-        if (versionSpan) versionSpan.innerText = `v${manifestVersion}`;
+        let displayVer = `v${manifestVersion}`;
+        if (manifestVersion === '1.6.0.1') displayVer = 'v1.6 Beta 1';
+
+        if (versionSpan) versionSpan.innerText = displayVer;
         const aboutVer = document.getElementById('aboutVersion');
-        if (aboutVer) aboutVer.innerText = `Version ${manifestVersion}`;
+        if (aboutVer) aboutVer.innerText = `Version ${manifestVersion} (Beta 1)`;
     } catch (e) { console.error(e); }
 
     const bulkPromptsInput = document.getElementById('bulkPrompts');
@@ -534,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 retryLimit: retryLimitInput.value,
                 moderationRetryLimit: moderationRetryLimitInput.value,
                 birthYear: birthYearInput.value,
+                globalPrompt: globalPromptInput.value,
                 upscale: upscaleInput.checked,
                 autoDownload: autoDownloadInput.checked,
                 autoSkip: autoSkipInput.checked,
@@ -579,6 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.settings.retryLimit) retryLimitInput.value = data.settings.retryLimit;
                 if (data.settings.moderationRetryLimit) moderationRetryLimitInput.value = data.settings.moderationRetryLimit;
                 if (data.settings.birthYear) birthYearInput.value = data.settings.birthYear;
+                if (data.settings.globalPrompt) globalPromptInput.value = data.settings.globalPrompt;
 
                 upscaleInput.checked = !!data.settings.upscale;
                 autoDownloadInput.checked = !!data.settings.autoDownload;
@@ -644,7 +651,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pauseOnModeration: pauseOnModerationInput.checked,
             showDashboard: showDashboardInput.checked,
             showDebugLogs: showDebugLogsInput.checked,
-            birthYear: birthYearInput.value
+            birthYear: birthYearInput.value,
+            globalPrompt: globalPromptInput.value
         };
         chrome.storage.local.set({ 'grokLoopConfig': config });
     }
@@ -679,7 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Attach Config Listeners
-    [timeoutInput, maxDelayInput, retryLimitInput, moderationRetryLimitInput, upscaleInput, autoDownloadInput, autoSkipInput, birthYearInput, continueOnFailureInput, pauseOnModerationInput, reuseInitialImageInput, showDashboardInput, showDebugLogsInput].forEach(el => {
+    [timeoutInput, maxDelayInput, retryLimitInput, moderationRetryLimitInput, upscaleInput, autoDownloadInput, autoSkipInput, birthYearInput, globalPromptInput, continueOnFailureInput, pauseOnModerationInput, reuseInitialImageInput, showDashboardInput, showDebugLogsInput].forEach(el => {
         if (el) {
             el.addEventListener('input', saveConfigs);
             el.addEventListener('change', saveConfigs);
@@ -726,7 +734,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (c.continueOnFailure !== undefined) continueOnFailureInput.checked = c.continueOnFailure;
             if (c.pauseOnModeration !== undefined) pauseOnModerationInput.checked = c.pauseOnModeration;
             if (c.showDashboard !== undefined) showDashboardInput.checked = c.showDashboard;
+            if (c.showDebugLogs !== undefined) showDebugLogsInput.checked = c.showDebugLogs;
             if (c.birthYear) birthYearInput.value = c.birthYear;
+            if (c.globalPrompt) globalPromptInput.value = c.globalPrompt;
 
             updateInitialImageLabel(); // Sync label on load
             if (c.birthYear) birthYearInput.value = c.birthYear;
@@ -994,6 +1004,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showDashboard: showDashboardInput.checked,
                 showDebugLogs: showDebugLogsInput.checked,
                 birthYear: birthYearInput.value || '2000',
+                globalPrompt: globalPromptInput.value || '',
 
                 // NEW Payload Structure
                 scenes: validScenes.map(s => ({

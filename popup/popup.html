@@ -68,9 +68,17 @@
         "></div>
     </div>
 
+    <!-- Global Prompt (Suffix) -->
+    <div class="input-group">
+      <label for="globalPrompt" title="Text appended to EVERY scene's prompt (e.g. style modifiers).">Global Suffix
+        (Style)</label>
+      <textarea id="globalPrompt" placeholder="e.g. cinematic lighting, 8k resolution, photorealistic"
+        style="height: 40px; resize: vertical;"></textarea>
+    </div>
+
     <!-- Bulk Prompts Input (Synced) -->
     <div class="input-group">
-      <label for="bulkPrompts">Prompts (One per line)</label>
+      <label for="bulkPrompts">Scene Prompts (One scene per line)</label>
       <textarea id="bulkPrompts" placeholder="Paste your script here...&#10;Line 1 = Scene 1&#10;Line 2 = Scene 2"
         style="height: 100px;"></textarea>
     </div>

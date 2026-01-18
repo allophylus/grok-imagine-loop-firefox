@@ -1,5 +1,9 @@
 # Release Notes - Grok Imagine Loop
 
+## v1.6.0
+- **Feature:** **Global Suffix / Style:** Added a new "Global Suffix" field. Text entered here is automatically appended to *every* scene's prompt. Perfect for maintaining consistent styles (e.g., "photorealistic, 8k") across an entire loop without manual repetition.
+- **Persistence:** Global Suffix is saved/loaded with your presets.
+
 ## v1.5.3
 - **Fix:** **Regenerate with Edits**: Fixed a bug where editing a prompt in the Side Panel and clicking "Regenerate" (in the Active Run list) would use the old/stale prompt. It now correctly applies your latest edits.
 
@@ -22,6 +26,7 @@
 - **Fix:** **Resume Logic:** Fixed bug where "Resume Loop" would immediately pause.
 - **Fix:** **Config Sync:** Settings like "Pause on Moderation" now update in real-time without restart.
 - **Fix:** **Global Image Persistence:** Fixed issue where the Global Initial Image wasn't saving correctly.
+- **Feature:** **Custom Start Images:** You can now upload a unique start image for *any* scene in the loop (not just the first one), allowing for hybrid flows (Generated -> Custom -> Generated).
 
 ## v1.4.0
 - **Feature:** **Pause on Moderation**. Added a new option (enabled by default) to automatically pause the loop when content is flagged or moderated. Disabling it will trigger a 5-second retry delay instead.

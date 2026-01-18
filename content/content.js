@@ -1316,8 +1316,16 @@ if (window.GrokLoopInjected) {
                     }
 
                     // 2. Prompt
+                    let finalPrompt = seg.prompt || '';
+                    if (state.config.globalPrompt && state.config.globalPrompt.trim().length > 0) {
+                        const suffix = state.config.globalPrompt.trim();
+                        // Append with a space if prompt is not empty
+                        finalPrompt = finalPrompt ? `${finalPrompt} ${suffix}` : suffix;
+                        console.log(`Applied Global Suffix: "${suffix}" -> Final: "${finalPrompt}"`);
+                    }
+
                     console.log(`Sending prompt for Segment ${index + 1}...`);
-                    await sendPromptToGrok(seg.prompt);
+                    await sendPromptToGrok(finalPrompt);
 
                     // 3. Status
                     let videoUrl = await waitForVideoResponse();

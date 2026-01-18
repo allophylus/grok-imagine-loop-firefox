@@ -16,3 +16,4 @@
 - **Debug Logs**: Fixed issue where enabling logs mid-run didn't take effect.
 - **More Button**: Fixed logic that accidentally clicked the "Search" button instead of "More" for upscaling.
 - **Tooltip Cropping**: Fixed tooltips going off-screen on the left side.
+- **Global Prompt Support**: Implemented "Global Suffix" field to append text to all scenes.

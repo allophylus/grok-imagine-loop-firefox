@@ -25,6 +25,7 @@ This tool allows you to create seamless video sequences by automatically using t
 *   **🛠️ Full Control:** 
     *   **Regenerate:** Retry any specific segment directly from the list.
     *   **Resume with Edits:** Edit future prompts while paused, then resume to apply changes dynamically.
+    *   **Global Suffix:** Apply a common style or instruction to *every* scene automatically (e.g. "cinematic lighting").
 
 ## Installation (Google Chrome)
 
@@ -69,6 +70,20 @@ This tool allows you to create seamless video sequences by automatically using t
 If you find this tool useful, consider buying me a coffee!
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mrdom78)
+
+## Reporting Issues
+
+Please report any issue here. Please include the following information when reporting issues:
+
+1.  **Screenshot** of your full desktop (including the Grok Imagine page and the extension panel).
+2.  **Export the log**:
+    *   Enable logs under **Settings** > **Show Debug Logs**.
+    *   Replicate the issue.
+    *   Go to **Main** tab.
+    *   Click **Download** next to Debug Logs.
+3.  **Operating System** (e.g. Ubuntu 24.04 LTS, macOS Sequoia).
+4.  **Browser** (e.g. Brave Browser, Chrome).
+5.  **Grok Interface Language** (e.g. English, German).
 
 ## Disclaimer
 
