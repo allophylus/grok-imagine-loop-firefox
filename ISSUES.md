@@ -9,6 +9,7 @@
 
 - [ ] **Cloud Sync**: Sync settings across devices (currently local only).
 - [ ] **Custom CSS Selectors**: Allow advanced users to override selectors in settings if Grok UI changes.
+- [ ] **Auto-Switch Video Mode**: Automatically select "Video" tab and desired Aspect Ratio on start.
 
 ## ✅ Resolved
 
