@@ -415,11 +415,18 @@ if (window.GrokLoopInjected) {
 
         // OPTION B: LEGACY/DEFAULT (Button First -> Enter Fallback)
         console.log('Legacy Mode: Searching for Send/Make Video button...');
+
         let sendBtn = null;
+        const mainContent = document.querySelector('main') || document.body; // Scope search
+
         for (let i = 0; i < 20; i++) {
-            const buttons = Array.from(document.querySelectorAll('button'));
+            // Scope search to main content to avoid sidebar/nav issues
+            const buttons = Array.from(mainContent.querySelectorAll('button'));
             sendBtn = buttons.find(b => {
                 const label = (b.textContent || b.ariaLabel || b.title || '').trim().toLowerCase();
+                // Ensure it's not a nav item
+                if (b.closest('nav') || b.closest('[role="navigation"]')) return false;
+
                 return label === 'make video' || label === 'send' || label === 'generate';
             });
 
