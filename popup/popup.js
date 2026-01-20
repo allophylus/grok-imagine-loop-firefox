@@ -438,6 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
             loopsInput.value = scenes.length;
             loopsInput.readOnly = true; // Controlled by list size
         }
+
+        // Restore video previews if state exists
+        if (lastKnownState && typeof updateScenePreviews === 'function') {
+            updateScenePreviews(lastKnownState);
+        }
     }
 
     function updateBulkFromScenes() {
