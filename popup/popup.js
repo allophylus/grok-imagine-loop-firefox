@@ -253,10 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let displayVer = `v${manifestVersion}`;
         if (manifestVersion === '1.6.0.1') displayVer = 'v1.6 Beta 1';
         if (manifestVersion === '1.6.0.2') displayVer = 'v1.6 Beta 2';
+        if (manifestVersion === '1.6.0.3') displayVer = 'v1.6 Beta 3';
 
         if (versionSpan) versionSpan.innerText = displayVer;
         const aboutVer = document.getElementById('aboutVersion');
-        if (aboutVer) aboutVer.innerText = `Version ${manifestVersion} (Beta 2)`;
+        if (aboutVer) aboutVer.innerText = `Version ${manifestVersion} (Beta 3)`;
     } catch (e) { console.error(e); }
 
     const bulkPromptsInput = document.getElementById('bulkPrompts');
@@ -715,6 +716,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Special Listener for Debug Logs Visibility
+    if (showDebugLogsInput) {
+        showDebugLogsInput.addEventListener('change', () => {
+            if (debugLogContainer) debugLogContainer.style.display = showDebugLogsInput.checked ? 'block' : 'none';
+        });
+    }
+
     // Special listener for Label Update
     if (reuseInitialImageInput) {
         reuseInitialImageInput.addEventListener('change', () => {
@@ -740,7 +748,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (c.pauseOnModeration !== undefined) pauseOnModerationInput.checked = c.pauseOnModeration;
             if (c.pauseAfterScene !== undefined) pauseAfterSceneInput.checked = c.pauseAfterScene;
             if (c.showDashboard !== undefined) showDashboardInput.checked = c.showDashboard;
-            if (c.showDebugLogs !== undefined) showDebugLogsInput.checked = c.showDebugLogs;
+            if (c.showDebugLogs !== undefined) {
+                showDebugLogsInput.checked = c.showDebugLogs;
+                if (debugLogContainer) debugLogContainer.style.display = c.showDebugLogs ? 'block' : 'none';
+            }
             if (c.birthYear) birthYearInput.value = c.birthYear;
             if (c.globalPrompt) globalPromptInput.value = c.globalPrompt;
 

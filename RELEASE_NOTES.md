@@ -2,6 +2,8 @@
 
 ## v1.6.0
 - **Feature:** **Pause After Video:** Added Option to stop loop after each video generation (useful for manual review).
+- **Fix:** Fixed Debug Log Console visibility issue on startup.
+- **Fix:** Fixed "Pause Loop" button state synchronization.
 - **Feature:** **Global Suffix / Style:** Added a new "Global Suffix" field. Text entered here is automatically appended to *every* scene's prompt. Perfect for maintaining consistent styles (e.g., "photorealistic, 8k") across an entire loop without manual repetition.
 - **Persistence:** Global Suffix is saved/loaded with your presets.
 
