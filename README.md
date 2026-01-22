@@ -1,6 +1,8 @@
-# Grok Imagine Loop Extension
+# Grok Imagine Loop Extension (Firefox Port)
 
-A Chrome Utility Extension to automate video generation loops on [Grok.com](https://grok.com).
+This is a **Firefox** port of the [Grok Imagine Loop Chrome Extension](https://github.com/allophylus/grok-imagine-loop) (specifically v1.6).
+
+A Utility Extension to automate video generation loops on [Grok.com](https://grok.com).
 
 This tool allows you to create seamless video sequences by automatically using the last frame of a generated video as the input for the next generation, creating a continuous "flow" effect.
 
@@ -29,21 +31,19 @@ This tool allows you to create seamless video sequences by automatically using t
     *   **Resume with Edits:** Edit future prompts while paused, then resume to apply changes dynamically.
     *   **Global Suffix:** Apply a common style or instruction to *every* scene automatically (e.g. "cinematic lighting").
 
-## Installation (Google Chrome)
+## Installation (Firefox)
 
 1.  **Download the Code:**
     *   Clone this repository or download the ZIP file and extract it.
-2.  **Open Extension Management:**
-    *   Open Google Chrome.
-    *   Navigate to `chrome://extensions/` (enter this in the URL bar).
-3.  **Enable Developer Mode:**
-    *   Toggle the **"Developer mode"** switch in the top-right corner of the page.
-4.  **Load the Extension:**
-    *   Click the **"Load unpacked"** button that appears in the top-left.
-    *   Select the `grok-extension` folder (the folder containing `manifest.json`).
-5.  **Pin the Extension:**
-    *   Click the "Puzzle Piece" icon in your Chrome toolbar.
-    *   Find "Grok Imagine Loop" and click the **Pin** icon to make it easily accessible.
+2.  **Open Debugging Page:**
+    *   Open Firefox.
+    *   Navigate to `about:debugging` (enter this in the URL bar).
+    *   Click on **"This Firefox"** in the left sidebar.
+3.  **Load Temporary Add-on:**
+    *   Click the **"Load Temporary Add-on..."** button.
+    *   Navigate to the `grok-extension-firefox` folder and select the `manifest.json` file.
+4.  **Pin (Optional):**
+    *   The extension icon should appear in your toolbar. Customize formatting if needed.
 
 ## Usage
 

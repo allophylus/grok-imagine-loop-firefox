@@ -1,5 +1,10 @@
 # Release Notes - Grok Imagine Loop
 
+## v1.6.1 (Firefox Port)
+- **Port:** Initial port of the Chrome Extension v1.6.0.7 to Firefox.
+- **Fix:** Resolved "Tab Not Found" issues by implementing robust tab querying compatible with Firefox's strict mode.
+- **Manifest:** Updated manifest to include `browser_specific_settings` for Gecko/Firefox.
+
 ## v1.6.0.7 (Beta 7)
 - **Fix:** Fixed an issue where adding new scenes to a finished loop and clicking "Resume" would incorrectly restart the loop from the beginning. It now correctly resumes processing the new scenes.
 
