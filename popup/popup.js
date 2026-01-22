@@ -254,7 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
         if (versionNumber) { // Check existence (new ID)
-            versionNumber.textContent = "v1.6 Beta 7"; // Manual Override for Beta
+            const manifest = chrome.runtime.getManifest();
+            versionNumber.textContent = `v${manifest.version}`;
+            // versionNumber.textContent = "v1.6 Beta 7"; // Manual Override for Beta
         }
 
         let displayVer = `v${manifestVersion}`;
@@ -847,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1. Query ALL tabs and filter manually for maximum reliability
             // This avoids issues with strict pattern matching differences between browsers
             const allTabs = await chrome.tabs.query({});
-            
+
             const strictTabs = allTabs.filter(t => t.url && (
                 t.url.includes('grok.com/imagine')
             ));
@@ -869,8 +871,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. If NO strict match, check for generic Grok/X tabs to give a better error
             const genericTabs = allTabs.filter(t => t.url && (
-                t.url.includes('grok.com') || 
-                t.url.includes('x.com') || 
+                t.url.includes('grok.com') ||
+                t.url.includes('x.com') ||
                 t.url.includes('twitter.com')
             ));
 

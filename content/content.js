@@ -175,23 +175,47 @@ if (window.GrokLoopInjected) {
     async function simulateClick(element) {
         if (!element) return;
 
-        // 1. Move to element (hover)
-        element.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
-        // ... (rest of simulateClick is fine)
-        element.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true, view: window }));
+        const rect = element.getBoundingClientRect();
+        const clientX = rect.left + (rect.width / 2);
+        const clientY = rect.top + (rect.height / 2);
+
+        const eventOpts = {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            clientX: clientX,
+            clientY: clientY,
+            screenX: window.screenX + clientX,
+            screenY: window.screenY + clientY,
+            pointerId: 1,
+            width: 1,
+            height: 1,
+            pressure: 0.5,
+            isPrimary: true
+        };
+
+        // 1. Hover Sequence
+        element.dispatchEvent(new MouseEvent('mouseover', eventOpts));
+        element.dispatchEvent(new PointerEvent('pointerover', eventOpts));
+        element.dispatchEvent(new MouseEvent('mouseenter', eventOpts));
+        element.dispatchEvent(new PointerEvent('pointerenter', eventOpts));
 
         // Reduced hover time for speed
-        await new Promise(r => setTimeout(r, Math.random() * 100 + 50));
+        await new Promise(r => setTimeout(r, Math.random() * 50 + 20));
 
-        // 2. Down
-        element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+        // 2. Down Sequence
+        element.dispatchEvent(new PointerEvent('pointerdown', { ...eventOpts, buttons: 1, button: 0 }));
+        element.dispatchEvent(new MouseEvent('mousedown', { ...eventOpts, buttons: 1, button: 0 }));
         element.focus();
 
         // Hold time
         await new Promise(r => setTimeout(r, Math.random() * 50 + 20));
 
-        // 3. Up & Click
-        element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+        // 3. Up Sequence
+        element.dispatchEvent(new PointerEvent('pointerup', { ...eventOpts, buttons: 0, button: 0 }));
+        element.dispatchEvent(new MouseEvent('mouseup', { ...eventOpts, buttons: 0, button: 0 }));
+
+        // 4. Click (The most important one, but pointers help React state)
         element.click();
     }
 
