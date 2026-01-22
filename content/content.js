@@ -457,6 +457,17 @@ if (window.GrokLoopInjected) {
                 if (!sendBtn.disabled && !sendBtn.classList.contains('disabled')) {
                     console.log('Found enabled Send button. Clicking humanly...');
                     await simulateClick(sendBtn);
+
+                    // VERIFY: Did it work?
+                    await new Promise(r => setTimeout(r, 1000));
+
+                    const textContent = (inputArea.value || inputArea.textContent || '').trim();
+                    if (inputArea.isConnected && textContent !== '') {
+                        console.warn(`Click seemingly failed (text "${textContent.substring(0, 10)}..." remains). Trying Enter key fallback...`);
+                        await simulateEnterKey(inputArea);
+                    } else {
+                        console.log('Button click appeared successful (input cleared/detached).');
+                    }
                     return;
                 }
             }
