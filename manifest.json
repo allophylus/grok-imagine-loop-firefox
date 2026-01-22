@@ -8,7 +8,8 @@
     "storage",
     "unlimitedStorage",
     "downloads",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "host_permissions": [
     "https://x.com/*",
