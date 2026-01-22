@@ -1,6 +1,7 @@
 // Open Side Panel on Icon Click
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
-    .catch((error) => console.error(error));
+// Firefox Port: sidePanel API not supported. Using sidebar_action manifest key.
+// chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
+//     .catch((error) => console.error("SidePanel Behavior Error (Ignored for Firefox):", error));
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'DOWNLOAD_VIDEO') {
