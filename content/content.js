@@ -5,13 +5,45 @@ if (window.GrokLoopInjected) {
     window.GrokLoopInjected = true;
     console.log('Grok Imagine Loop content script (V2) Initializing...');
 
+    function detectLanguage() {
+        const lang = document.documentElement.lang || navigator.language || 'en';
+        console.log(`[Content] Detected Language: ${lang}`);
+        return lang;
+    }
+    detectLanguage();
+
+    // --- Selectors ---
+    // --- Multi-Language Support ---
+    const TRANSLATIONS = {
+        send: ['send', 'post', 'submit', 'enviar', 'publicar', 'envoyer', 'publier', 'absenden', 'senden', 'veröffentlichen', '发送', '发布', '送信', '投稿', 'отправить', 'enviar'],
+        makeVideo: ['make video', 'generate', 'create video', 'crear video', 'generar', 'créer une vidéo', 'générer', 'video erstellen', 'generieren', '生成视频', '制作视频', '動画を作成', 'создать видео', 'criar vídeo'],
+        upload: ['add photos', 'add image', 'upload', 'añadir', 'subir', 'ajouter', 'importer', 'hochladen', 'hinzufügen', '添加', '上传', '追加', 'загрузить', 'adicionar'],
+        regenerate: ['redo', 'regenerate', 'try again', 'retry', 'vary', 'regenerar', 'intentar de nuevo', 'variar', 'régénérer', 'réessayer', 'neu erzeugen', 'erneut versuchen', '重新生成', '再試行', 'регенерировать', 'regenerar'],
+        remove: ['remove', 'delete', 'close', 'eliminar', 'quitar', 'cerrar', 'supprimer', 'fermer', 'entfernen', 'schließen', '删除', '关闭', '削除', '閉じる', 'удалить', 'remover', 'fechar'],
+        moderation: ['content moderated', 'try a different idea', 'contenido moderado', 'contenu modéré', 'moderiert', '内容已过滤', '內容已過濾', '不適切なコンテンツ', 'контент модерируется', 'conteúdo moderado'],
+        upscale: [
+            'upscale', 'enhance', // English
+            'escalar', 'mejorar vídeo', 'mejorar video', 'optimizar', // Spanish
+            'rehausser', 'améliorer la vidéo', 'améliorer', 'optimiser', // French
+            'hochskalieren', 'verbessern', 'optimieren', // German (Restored 'verbessern' but it's safe now due to priority logic)
+            '放大', '增强', '升级', '超分', '优化', // Chinese (Simplified)
+            '升級', '升級影片', // Chinese (Traditional)
+            'アップスケール', '高画質化', '強化', '改善', // Japanese
+            'улучшить', 'масштабировать', 'оптимизировать', // Russian
+            'melhorar', 'otimizar' // Portuguese
+        ],
+        more: ['more', 'options', 'más', 'plus', 'mehr', '更多', 'その他', 'еще', 'mais'],
+        edit: ['edit', 'change', 'modify', 'editar', 'modifier', 'bearbeiten', '编辑', '編集', 'изменить'],
+        skip: ['skip', 'pass', 'saltar', 'passer', 'überspringen', '跳过', 'スキップ', 'пропустить', 'pular']
+    };
+
     // --- Selectors ---
     const SELECTORS = {
         textArea: 'textarea, div[contenteditable="true"], div[role="textbox"]',
-        uploadButton: 'button[aria-label="Add photos or video"], button[title="Add image"], button svg rect',
-        sendButton: 'button[aria-label="Send"], button[aria-label="Post"], button[type="submit"]',
-        // Common grok.com specific
-        grokUpload: 'button[aria-label="Upload file"]'
+        // Note: Specific button selectors now handled dynamically via TRANSLATIONS
+        uploadButton: 'button[aria-label], button[title], button svg rect',
+        sendButton: 'button[type="submit"], button[aria-label]',
+        grokUpload: 'button[aria-label]'
     };
 
     // --- State ---
@@ -426,7 +458,12 @@ if (window.GrokLoopInjected) {
                 if (b.closest('nav') || b.closest('aside') || b.closest('[role="navigation"]')) return false;
 
                 const label = (b.textContent || b.ariaLabel || b.title || '').trim().toLowerCase();
-                return label === 'make video' || label === 'send' || label === 'generate';
+
+                // Multi-Language Match
+                const isSend = TRANSLATIONS.send.some(k => label === k || label.includes(k));
+                const isMakeVideo = TRANSLATIONS.makeVideo.some(k => label === k || label.includes(k));
+
+                return isSend || isMakeVideo;
             });
 
             if (sendBtn) {
@@ -444,40 +481,54 @@ if (window.GrokLoopInjected) {
     }
 
     async function clearInputAttachments() {
-        // Look for "Remove" buttons (X) on thumbnails in the input area
-        // Strategy 1: Aria Label / Title
-        const labels = ['Remove', 'Remove attachment', 'Close', 'Delete'];
-        let removeBtns = Array.from(document.querySelectorAll('button')).filter(b =>
-            labels.some(l => (b.ariaLabel === l || b.title === l))
-        );
-
-        // Strategy 2: SVG Path (X icon common path)
-        if (removeBtns.length === 0) {
-            // Find inputs/thumbnails logic...
-            const thumbnails = document.querySelectorAll('div[role="group"] img, .input-area img');
-            thumbnails.forEach(img => {
-                // The button is usually a sibling or parent's sibling
-                const container = img.closest('div[role="group"]') || img.parentElement;
-                if (container) {
-                    const btns = container.querySelectorAll('button');
-                    btns.forEach(b => removeBtns.push(b));
+        // Look for "Remove" buttons (X) strictly associated with cached thumbnails
+        // Strategy: Find thumbnails first, then find their adjacent 'Remove' button.
+        const cachedThumbnails = Array.from(document.querySelectorAll('img[alt*="image"], img[alt*="Up"], div[role="img"]')).filter(img => {
+            // Filter to likely attachment thumbnails (usually small, in input area)
+            // CRITICAL FIX: Only accept Blob/Data URLs (Uploaded images). Ignore static UI icons (https://...)
+            if (img.tagName === 'IMG') {
+                const src = (img.src || '').toLowerCase();
+                if (!src.startsWith('blob:') && !src.startsWith('data:')) {
+                    return false;
                 }
-            });
-        }
+            } else if (img.tagName === 'DIV' && img.getAttribute('role') === 'img') {
+                // Strict check for DIV thumbnails: Must NOT be an avatar/user icon
+                const label = (img.ariaLabel || '').toLowerCase();
+                if (label.includes('user') || label.includes('profile') || label.includes('avatar') || label.includes('grok')) {
+                    return false;
+                }
+            }
 
-        // Strategy 2 (Backup): Find any button inside the input area that isn't the file upload or send button
-        // This is risky, but effective if styled with an X
-
-        const attachmentCloseBtns = removeBtns.filter(btn => {
-            // Ensure button is near the input area or in a thumbnail container
-            return btn.closest('.input-area') || btn.closest('div[role="group"]') || (btn.parentElement && btn.parentElement.innerText === ''); // Empty parents often hold icon-only buttons
+            return img.closest('div[role="group"]') || img.closest('.input-area') || (img.width < 150 && img.closest('form'));
         });
 
-        if (attachmentCloseBtns.length > 0) {
-            console.log(`Found ${attachmentCloseBtns.length} attachments to clear. Removing...`);
-            for (let btn of attachmentCloseBtns) {
-                // Ensure it's not the main upload button (usually has 'Attach' or specific icon)
-                if (btn.ariaLabel === 'Attach media') continue;
+        console.log(`[Attachment Debug] Found ${cachedThumbnails.length} valid cached thumbnails.`);
+
+        const removeBtns = [];
+
+        cachedThumbnails.forEach(thumb => {
+            // Look for sibling button or parent's sibling
+            const container = thumb.closest('div[role="group"]') || thumb.parentElement;
+            if (container) {
+                const possibleBtns = container.querySelectorAll('button');
+                possibleBtns.forEach(b => {
+                    const label = (b.ariaLabel || b.title || '').toLowerCase();
+                    if (TRANSLATIONS.remove.some(k => label.includes(k))) {
+                        removeBtns.push(b);
+                    }
+                });
+            }
+        });
+
+        // Filter duplicates
+        const uniqueBtns = [...new Set(removeBtns)];
+
+        if (uniqueBtns.length > 0) {
+            console.log(`Found ${uniqueBtns.length} cached attachments to clear. Removing...`);
+            for (let btn of uniqueBtns) {
+                // Double check it's not the main upload button
+                const label = (btn.ariaLabel || btn.title || '').toLowerCase();
+                if (TRANSLATIONS.upload.some(k => label.includes(k))) continue;
 
                 btn.click();
                 await new Promise(r => setTimeout(r, 200));
@@ -533,7 +584,8 @@ if (window.GrokLoopInjected) {
                     return;
                 }
 
-                if (bodyText.includes('Content Moderated') || bodyText.includes('Try a different idea')) {
+                // Multi-Language Moderation Check
+                if (TRANSLATIONS.moderation.some(k => bodyText.toLowerCase().includes(k))) {
                     // Verify it's not just in the prompt textarea
                     // Find the element containing this text to be sure it's an alert/toast
                     const hints = Array.from(document.querySelectorAll('div, span, p')).filter(el =>
@@ -568,49 +620,42 @@ if (window.GrokLoopInjected) {
         // 1. Scope Search to Main Content Area (to avoid Sidebar)
         const mainContent = document.querySelector('main') || document.body;
 
-        // Helper to find button/menuitem by text (Scoped optional)
-        const findBtn = (text, scope = document) => {
+        // Helper to find button/menuitem by translations
+        const findLocalizedBtn = (translationKeys, scope = document) => {
             const elements = Array.from(scope.querySelectorAll('button, div[role="button"], div[role="menuitem"]'));
             return elements.find(el => {
+                // Ignore navigation elements
+                if (el.closest('nav') || el.closest('[role="navigation"]')) return false;
+
                 const content = (el.innerText || el.ariaLabel || el.textContent || '').toLowerCase();
-                return content.includes(text.toLowerCase()) && !el.disabled;
+                const match = translationKeys.find(k => content.includes(k));
+                if (match && !el.disabled) {
+                    console.log(`[Upscale Debug] Match found for keys [${translationKeys[0]}...]: "${match}" in "${content}"`);
+                    return true;
+                }
+                return false;
             });
         };
 
-        // 1. Try finding 'Upscale' directly (Search global or main? Main is safer for buttons, Global for menus)
-        // Let's try Main first, then Global if needed?
-        // Actually, direct buttons are usually in Main.
-        let upscaleBtn = findBtn('Upscale', mainContent);
+        // 1. Try finding 'Upscale' directly
+        let upscaleBtn = findLocalizedBtn(TRANSLATIONS.upscale, mainContent);
 
         if (!upscaleBtn) {
             console.log('Upscale button not found directly. Checking "More" menu...');
 
             // 2. Find "More" button (...) - Scoped to Main
-            // Strategy A: Aria Label (More, Options, etc.)
+
+            // Strategy C: Inner Text "..." (Visual Icon - Highest Priority)
             let moreBtn = Array.from(mainContent.querySelectorAll('button')).find(b => {
-                const label = (b.ariaLabel || b.title || '').toLowerCase();
-                // Ensure it's NOT in a navigation sidebar
                 if (b.closest('nav') || b.closest('[role="navigation"]')) return false;
-
-                return (label.includes('more') || label.includes('option')) && !b.disabled;
+                const text = (b.innerText || '').trim();
+                return text.includes('...') || text.includes('…');
             });
-
-            // Strategy C: Inner Text "..." (Loosened)
-            if (!moreBtn) {
-                console.log('Strategy A failed. Trying Strategy C (Inner Text "...")...');
-                moreBtn = Array.from(mainContent.querySelectorAll('button')).find(b => {
-                    if (b.closest('nav') || b.closest('[role="navigation"]')) return false;
-                    const text = (b.innerText || '').trim();
-                    return text.includes('...') || text.includes('…');
-                });
-            }
 
             // Strategy B: Proximity to "Edit" (Refined)
             if (!moreBtn) {
-                console.log('Strategy A/C failed. Trying Strategy B (Proximity)...');
-                const editBtn = Array.from(mainContent.querySelectorAll('button')).find(b =>
-                    (b.innerText || '').toLowerCase().includes('edit') // broader match
-                );
+                console.log('Strategy C failed. Trying Strategy B (Proximity to Edit)...');
+                const editBtn = findLocalizedBtn(TRANSLATIONS.edit, mainContent);
 
                 if (editBtn) {
                     const container = editBtn.parentElement;
@@ -628,11 +673,8 @@ if (window.GrokLoopInjected) {
 
             // Strategy D: Proximity to "Redo" or "Retry" (if Edit not found)
             if (!moreBtn) {
-                console.log('Strategy A/B/C failed. Trying Strategy D (Redo/Retry Proximity)...');
-                const actionBtn = Array.from(mainContent.querySelectorAll('button')).find(b => {
-                    const text = (b.innerText || '').toLowerCase();
-                    return text.includes('redo') || text.includes('retry') || text.includes('vary');
-                });
+                console.log('Strategy B failed. Trying Strategy D (Proximity to Redo)...');
+                const actionBtn = findLocalizedBtn(TRANSLATIONS.regenerate, mainContent);
 
                 if (actionBtn) {
                     const container = actionBtn.parentElement;
@@ -645,6 +687,12 @@ if (window.GrokLoopInjected) {
                         }
                     }
                 }
+            }
+
+            // Strategy A: Localized terms (Fallback - Last Resort, mainly for English "More" if icon is missing)
+            if (!moreBtn) {
+                console.log('Strategy D failed. Trying Strategy A (Localized Text)...');
+                moreBtn = findLocalizedBtn(TRANSLATIONS.more, mainContent);
             }
 
             if (moreBtn) {
@@ -670,7 +718,7 @@ if (window.GrokLoopInjected) {
                 await new Promise(r => setTimeout(r, 1000)); // Extra settle time
 
                 // 3. Search for Upscale again inside the new menu (Global Scope for Portals)
-                upscaleBtn = findBtn('Upscale', document); // This will use the "Upscale" or "Upscale video" logic we have
+                upscaleBtn = findLocalizedBtn(TRANSLATIONS.upscale, document);
             } else {
                 console.warn('Could not find "More" button via any strategy.');
 
@@ -681,16 +729,43 @@ if (window.GrokLoopInjected) {
                     console.log('Sample Toolbar HTML:', likelyToolbar.innerHTML);
                 }
                 const allButtons = Array.from(document.querySelectorAll('button'));
-                console.log('All Buttons:', allButtons.map(b => ({
-                    text: b.innerText,
-                    aria: b.ariaLabel,
-                    svg: b.querySelector('svg') ? 'Has SVG' : 'No SVG'
-                })));
+                console.log('All Buttons:', allButtons.map(b => {
+                    const label = (b.ariaLabel || b.title || b.innerText || '').toLowerCase();
+                    const isUpload = typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS.upload && TRANSLATIONS.upload.some(k => label.includes(k));
+
+                    return {
+                        text: b.innerText,
+                        aria: b.ariaLabel,
+                        svg: b.querySelector('svg') ? 'Has SVG' : 'No SVG',
+                        isUpload: isUpload
+                    };
+                }));
             }
         }
 
         if (!upscaleBtn) {
             console.warn('Upscale button not found anywhere.');
+
+            // PANIC DUMP: Log all text on screen to see if we missed it or if menu is closed
+            console.log('%c --- PANIC DUMP (Visible Text) ---', 'color: red; font-weight: bold;');
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+                acceptNode: function (node) {
+                    if (!node.parentElement) return NodeFilter.FILTER_REJECT;
+                    const style = window.getComputedStyle(node.parentElement);
+                    if (style.display === 'none' || style.visibility === 'hidden') return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+
+            let node;
+            const foundText = [];
+            while (node = walker.nextNode()) {
+                const txt = node.textContent.trim();
+                if (txt.length > 2) foundText.push(txt);
+            }
+            console.log('Visible Text dump:', foundText);
+            console.log('Searching for matches in dump:', foundText.filter(t => TRANSLATIONS.upscale.some(k => t.toLowerCase().includes(k))));
+
             throw new Error('Upscale button not found.');
         }
 
@@ -710,7 +785,7 @@ if (window.GrokLoopInjected) {
             const buttons = Array.from(document.querySelectorAll('button'));
             return buttons.find(b => {
                 const text = (b.innerText || b.ariaLabel || '').toLowerCase();
-                return text === 'skip' && !b.disabled;
+                return TRANSLATIONS.skip.some(k => text.includes(k)) && !b.disabled;
             });
         };
 
@@ -1312,7 +1387,19 @@ if (window.GrokLoopInjected) {
                     break;
                 }
 
-                await this.processSegment(i);
+                try {
+                    await this.processSegment(i);
+                } catch (err) {
+                    console.error('Loop Error (Stopped):', err);
+                    state.isRunning = false;
+                    // Ensure status shows error in UI
+                    if (!state.segments[i].status.includes('error') && !state.segments[i].status.includes('paused')) {
+                        state.segments[i].status = 'error';
+                    }
+                    this.dashboard.update();
+                    this.saveState();
+                    break;
+                }
 
                 // Pause After Scene (Step Mode)
                 if (state.config.pauseAfterScene && state.isRunning) {
@@ -1465,12 +1552,32 @@ if (window.GrokLoopInjected) {
                         // IMPORTANT: Do NOT overwrite if user provided a custom image!
                         if (!nextSeg.inputImage) {
                             console.log(`Proactively extracting frame for Segment ${index + 2}...`);
-                            try {
-                                const nextFrame = await extractLastFrame(videoUrl);
-                                nextSeg.inputImage = nextFrame;
-                                state.lastGeneratedImage = nextFrame; // Update global backup
-                            } catch (e) {
-                                console.warn('Proactive extraction failed (will retry on next step):', e);
+
+                            // Retry Logic for Extraction
+                            let extraAttempts = 3;
+                            let extractSuccess = false;
+
+                            while (extraAttempts > 0 && !extractSuccess) {
+                                try {
+                                    const nextFrame = await extractLastFrame(videoUrl);
+                                    nextSeg.inputImage = nextFrame;
+                                    state.lastGeneratedImage = nextFrame; // Update global backup
+                                    extractSuccess = true;
+                                    console.log('Proactive extraction successful.');
+                                } catch (e) {
+                                    console.warn(`Proactive extraction failed (Attempts left: ${extraAttempts - 1}):`, e.message || e);
+                                    extraAttempts--;
+                                    if (extraAttempts > 0) {
+                                        console.log('Retrying extraction in 3s...');
+                                        await new Promise(r => setTimeout(r, 3000));
+                                    } else {
+                                        console.error('Proactive extraction failed after all retries.');
+                                        // Respect "Pause on Error" setting
+                                        if (!state.config.continueOnFailure) {
+                                            throw new Error("Proactive Frame Extraction Failed. Stopping loop (Pause on Error is enabled).");
+                                        }
+                                    }
+                                }
                             }
                         } else {
                             console.log(`Segment ${index + 2} has a custom image. Skipping frame extraction.`);
@@ -1538,14 +1645,23 @@ if (window.GrokLoopInjected) {
 
                             await new Promise(r => setTimeout(r, 5000));
 
-                            // Try to find and click Redo/Regenerate button
-                            const redoBtn = Array.from(document.querySelectorAll('button')).find(b =>
-                                (b.innerText.includes('Redo') || b.innerText.includes('Regenerate') || b.getAttribute('aria-label')?.includes('Regenerate'))
-                                && !b.disabled
-                            );
+                            // Try to find and click Redo/Regenerate button (Multi-Language)
+                            // FIX: Exclude Dashboard buttons to prevent self-clicking
+                            const redoBtn = Array.from(document.querySelectorAll('button')).find(b => {
+                                // Exclude dashboard
+                                if (b.closest('#grok-loop-dashboard')) return false;
+
+                                const text = (b.innerText || '').toLowerCase();
+                                const aria = (b.getAttribute('aria-label') || '').toLowerCase();
+                                const title = (b.title || '').toLowerCase();
+
+                                return TRANSLATIONS.regenerate.some(k =>
+                                    text.includes(k) || aria.includes(k) || title.includes(k)
+                                ) && !b.disabled;
+                            });
 
                             if (redoBtn) {
-                                console.log('Clicking Redo/Regenerate button...');
+                                console.log('Clicking Redo/Regenerate button:', debugBtn(redoBtn));
                                 redoBtn.click();
                             } else {
                                 console.warn('Redo button not found. Falling back to full retry loop.');
@@ -1572,16 +1688,7 @@ if (window.GrokLoopInjected) {
                         }
                     }
 
-                    // 2. Generic Global Pause on Error (User Requested)
-                    // Only triggers if NOT handled above
-                    if (state.config.pauseOnError) {
-                        console.error('Pause on Error enabled. Stopping loop.');
-                        state.isRunning = false;
-                        seg.status = 'error';
-                        this.dashboard.update();
-                        alert(`Workflow Paused due to Error:\n${err.message}`);
-                        return;
-                    }
+
 
 
                     console.error(`Segment ${index + 1} failed on attempt ${attempt + 1}:`, err);
@@ -1687,6 +1794,7 @@ if (window.GrokLoopInjected) {
                     if (newConfig.pauseOnModeration !== undefined) state.config.pauseOnModeration = newConfig.pauseOnModeration;
                     if (newConfig.showDebugLogs !== undefined) state.config.showDebugLogs = newConfig.showDebugLogs;
                     if (newConfig.moderationRetryLimit !== undefined) state.config.moderationRetryLimit = newConfig.moderationRetryLimit;
+                    if (newConfig.pauseAfterScene !== undefined) state.config.pauseAfterScene = newConfig.pauseAfterScene;
                     // Other runtime configs can be synced here if needed
                 }
             }

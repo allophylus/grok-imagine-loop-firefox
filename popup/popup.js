@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showDashboardInput = document.getElementById('showDashboard');
     const birthYearInput = document.getElementById('birthYear');
     const globalPromptInput = document.getElementById('globalPrompt');
-    const continueOnFailureInput = document.getElementById('continueOnFailure');
+    const pauseOnErrorInput = document.getElementById('pauseOnError');
     const pauseOnModerationInput = document.getElementById('pauseOnModeration');
     const pauseAfterSceneInput = document.getElementById('pauseAfterScene');
     const upscaleInput = document.getElementById('upscale');
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     autoDownload: autoDownloadInput.checked,
                     autoSkip: autoSkipInput.checked,
                     reuseInitialImage: reuseInitialImageInput.checked,
-                    continueOnFailure: continueOnFailureInput.checked,
+                    continueOnFailure: !pauseOnErrorInput.checked,
                     pauseOnModeration: pauseOnModerationInput.checked,
                     pauseAfterScene: pauseAfterSceneInput.checked,
                     birthYear: birthYearInput.value,
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
         if (versionNumber) { // Check existence (new ID)
-            versionNumber.textContent = "v1.6 Beta 7"; // Manual Override for Beta
+            versionNumber.textContent = "v1.6 Beta 12"; // Manual Override for Beta
         }
 
         let displayVer = `v${manifestVersion}`;
@@ -607,7 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 autoDownloadInput.checked = !!data.settings.autoDownload;
                 autoSkipInput.checked = !!data.settings.autoSkip;
                 reuseInitialImageInput.checked = !!data.settings.reuseInitialImage;
-                continueOnFailureInput.checked = !!data.settings.continueOnFailure;
+                pauseOnErrorInput.checked = !data.settings.continueOnFailure;
                 pauseOnModerationInput.checked = !!data.settings.pauseOnModeration;
                 if (data.settings.pauseAfterScene !== undefined) pauseAfterSceneInput.checked = data.settings.pauseAfterScene;
                 if (data.settings.showDashboard !== undefined) {
@@ -662,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
             autoDownload: autoDownloadInput.checked,
             autoSkip: autoSkipInput.checked,
             reuseInitialImage: reuseInitialImageInput.checked,
-            continueOnFailure: continueOnFailureInput.checked,
+            continueOnFailure: !document.getElementById('pauseOnError').checked, // Inverted Logic
             pauseOnModeration: pauseOnModerationInput.checked,
             pauseAfterScene: pauseAfterSceneInput.checked,
             showDashboard: showDashboardInput.checked,
@@ -705,7 +705,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Attach Config Listeners
-    [timeoutInput, maxDelayInput, retryLimitInput, moderationRetryLimitInput, upscaleInput, autoDownloadInput, autoSkipInput, birthYearInput, globalPromptInput, continueOnFailureInput, pauseOnModerationInput, pauseAfterSceneInput, reuseInitialImageInput, showDashboardInput, showDebugLogsInput].forEach(el => {
+    // const pauseOnErrorInput = document.getElementById('pauseOnError'); // Moved to top
+    [timeoutInput, maxDelayInput, retryLimitInput, moderationRetryLimitInput, upscaleInput, autoDownloadInput, autoSkipInput, birthYearInput, globalPromptInput, pauseOnErrorInput, pauseOnModerationInput, pauseAfterSceneInput, reuseInitialImageInput, showDashboardInput, showDebugLogsInput].forEach(el => {
         if (el) {
             el.addEventListener('input', saveConfigs);
             el.addEventListener('change', saveConfigs);
@@ -756,7 +757,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (c.autoDownload !== undefined) autoDownloadInput.checked = c.autoDownload;
             if (c.autoSkip !== undefined) autoSkipInput.checked = c.autoSkip;
             if (c.reuseInitialImage !== undefined) reuseInitialImageInput.checked = c.reuseInitialImage;
-            if (c.continueOnFailure !== undefined) continueOnFailureInput.checked = c.continueOnFailure;
+
+            // Logic Inversion: continueOnFailure (true) = pauseOnError (false)
+            if (c.continueOnFailure !== undefined) {
+                // If continueOnFailure is true, Pause on Error should be false
+                // If continueOnFailure is false (default), Pause on Error should be true
+                // Check if element exists (renamed)
+                const pauseOnErrorInput = document.getElementById('pauseOnError');
+                if (pauseOnErrorInput) pauseOnErrorInput.checked = !c.continueOnFailure;
+            } else {
+                // Default: continueOnFailure is undefined (falsy) -> Pause on Error = True
+                const pauseOnErrorInput = document.getElementById('pauseOnError');
+                if (pauseOnErrorInput) pauseOnErrorInput.checked = true;
+            }
+
             if (c.pauseOnModeration !== undefined) pauseOnModerationInput.checked = c.pauseOnModeration;
             if (c.pauseAfterScene !== undefined) pauseAfterSceneInput.checked = c.pauseAfterScene;
             if (c.showDashboard !== undefined) showDashboardInput.checked = c.showDashboard;
@@ -846,8 +860,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // 1. Query ALL tabs and filter manually for maximum reliability
             // This avoids issues with strict pattern matching differences between browsers
+            // Requires "tabs" permission in manifest
             const allTabs = await chrome.tabs.query({});
-            
+
+            // Robust Filter: Includes www, no-www, http, https, trailing slashes, etc.
             const strictTabs = allTabs.filter(t => t.url && (
                 t.url.includes('grok.com/imagine')
             ));
@@ -869,8 +885,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. If NO strict match, check for generic Grok/X tabs to give a better error
             const genericTabs = allTabs.filter(t => t.url && (
-                t.url.includes('grok.com') || 
-                t.url.includes('x.com') || 
+                t.url.includes('grok.com') ||
+                t.url.includes('x.com') ||
                 t.url.includes('twitter.com')
             ));
 
@@ -1045,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 autoDownload: autoDownloadInput.checked,
                 autoSkip: autoSkipInput.checked,
                 reuseInitialImage: reuseInitialImageInput.checked,
-                continueOnFailure: continueOnFailureInput.checked,
+                continueOnFailure: !pauseOnErrorInput.checked,
                 pauseOnModeration: pauseOnModerationInput.checked,
                 pauseAfterScene: pauseAfterSceneInput.checked,
                 showDashboard: showDashboardInput.checked,

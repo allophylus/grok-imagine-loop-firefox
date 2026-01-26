@@ -1,5 +1,40 @@
 # Release Notes - Grok Imagine Loop
 
+## v1.6.0.14 (Beta 14)
+- **Feature:** **Multi-Language A/B Test Support:** Automatically detects and skips the "Which video do you prefer?" survey in all supported languages (Chinese, German, Japanese, English, Spanish, etc.).
+- **Fix:** **Enhanced Upscaling Support:**
+    - Fixed German "Upscale" detection by prioritizing the `...` icon over text to prevent misclicks.
+    - Added support for Traditional Chinese ("升級影片") and simplified Chinese variations.
+    - Improved Spanish detection ("Mejorar vídeo") to avoid confusion with "Enhance Prompt".
+    - Restored robust English fallback detection.
+- **Fix:** **Resume Button Reliability:** Fixed a bug where the dashboard buttons would get stuck in a "Resuming..." state if the loop crashed (e.g. max retries). They now correctly reset to "Resume Loop".
+
+
+## v1.6.0.13 (Beta 13)
+- **Fix:** Fixed a critical issue where "Resume Loop" would accidentally click the "Clear/Delete" (X) button on the main toolbar, causing the generation to vanish. The extension now strictly targets only "X" buttons attached to *uploaded* thumbnails.
+- **Debug:** Added clearer logging for Language Detection and Attachment Cleaning to help troubleshoot multi-language environments.
+
+
+## v1.6.0.12 (Beta 12)
+- **Fix:** "Pause on Error" now correctly pauses the loop if "Proactive Frame Extraction" fails after all retries. Previously, it would log the error but continue to the next segment without an image.
+
+## v1.6.0.11 (Beta 11)
+- **Feature:** Added Multi-Language Support! The extension now supports Grok in English, Spanish, French, German, Chinese (Simplified/Traditional), Japanese, Russian, and Portuguese.
+- **Refactor:** Updated all button selectors to use a robust dictionary of localized terms.
+
+## v1.6.0.10 (Beta 10)
+- **Fix:** Added automatic retries (3 attempts) for "Proactive Frame Extraction" failures. This prevents the "extraction failed" error from stopping your workflow or causing missing frames in the next segment.
+- **Fix:** Improved error logging to catch and display detailed error messages.
+
+## v1.6.0.9 (Beta 9)
+- **UI:** Renamed "Skip Failed Segments" setting to **"Pause on Error"** to make the behavior clearer.
+    - Checked = Workflow pauses if an error occurs (Default).
+    - Unchecked = Workflow skips failed segments and continues.
+
+## v1.6.0.8 (Beta 8)
+- **Fix:** "Pause After Scene" setting now updates instantly while the loop is running. Previously, you had to restart the loop for this change to take effect.
+- **Refactor:** Removed legacy code.
+
 ## v1.6.0.7 (Beta 7)
 - **Fix:** Fixed an issue where adding new scenes to a finished loop and clicking "Resume" would incorrectly restart the loop from the beginning. It now correctly resumes processing the new scenes.
 
