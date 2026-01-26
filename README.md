@@ -1,8 +1,8 @@
-# Grok Imagine Loop Extension
+# Grok Imagine Loop Extension (Firefox)
 
-A Chrome Utility Extension to automate video generation loops on [Grok.com](https://grok.com).
+This is a **Firefox** port of the [Grok Imagine Loop Chrome Extension](https://github.com/allophylus/grok-imagine-loop) (v1.6).
 
-This tool allows you to create seamless video sequences by automatically using the last frame of a generated video as the input for the next generation, creating a continuous "flow" effect.
+A browser extension to automate video generation loops on [Grok.com](https://grok.com). This tool allows you to create seamless video sequences by automatically using the last frame of a generated video as the input for the next generation, creating a continuous "flow" effect.
 
 ## Features
 
@@ -15,8 +15,8 @@ This tool allows you to create seamless video sequences by automatically using t
 *   **💾 State Persistence:**
     *   **Input Saving:** Your Prompts, Scene counts, and settings are saved automatically.
     *   **Config Presets:** Save and load multiple "Loops" (Settings + Scenes) for easy reuse.
-*   **⇱ Side Panel Workflow:**
-    *   **Native Integration:** Runs directly in the Chrome Side Panel for a seamless experience.
+*   **⇱ Sidebar Workflow:**
+    *   **Native Integration:** Runs directly in the Firefox Sidebar for a seamless experience.
     *   **Optional Dashboard:** Toggle the floating on-page overlay if you prefer a clean view.
 *   **🌍 Multi-Language Support:** Works with Grok in English, Spanish, French, German, Chinese, Japanese, Russian, and Portuguese.
 *   **🛡️ Anti-Bot Protection:** 
@@ -31,21 +31,20 @@ This tool allows you to create seamless video sequences by automatically using t
     *   **Resume with Edits:** Edit future prompts while paused, then resume to apply changes dynamically.
     *   **Global Suffix:** Apply a common style or instruction to *every* scene automatically (e.g. "cinematic lighting").
 
-## Installation (Google Chrome)
+## Installation (Firefox)
 
 1.  **Download the Code:**
     *   Clone this repository or download the ZIP file and extract it.
-2.  **Open Extension Management:**
-    *   Open Google Chrome.
-    *   Navigate to `chrome://extensions/` (enter this in the URL bar).
-3.  **Enable Developer Mode:**
-    *   Toggle the **"Developer mode"** switch in the top-right corner of the page.
-4.  **Load the Extension:**
-    *   Click the **"Load unpacked"** button that appears in the top-left.
-    *   Select the `grok-extension` folder (the folder containing `manifest.json`).
-5.  **Pin the Extension:**
-    *   Click the "Puzzle Piece" icon in your Chrome toolbar.
-    *   Find "Grok Imagine Loop" and click the **Pin** icon to make it easily accessible.
+2.  **Open Debugging Page:**
+    *   Open Firefox.
+    *   Navigate to `about:debugging` (enter this in the URL bar).
+    *   Click on **"This Firefox"** in the left sidebar.
+3.  **Load Temporary Add-on:**
+    *   Click the **"Load Temporary Add-on..."** button.
+    *   Navigate to the `grok-extension-firefox` folder and select the `manifest.json` file.
+4.  **Access the Extension:**
+    *   The extension icon will appear in your toolbar.
+    *   You can also access it via **View → Sidebar → Grok Imagine Loop**.
 
 ## Usage
 
@@ -73,11 +72,11 @@ This tool allows you to create seamless video sequences by automatically using t
 ## Performance & Troubleshooting
 
 ### Loop Pausing / Slowing Down in Background
-If the extension stops or runs very slowly when you switch tabs, you are hitting **Chrome's Background Tab Throttling**. This is a browser feature to save battery.
+If the extension stops or runs very slowly when you switch tabs, you may be hitting **Firefox's Background Tab Throttling**. This is a browser feature to save battery.
 
 **Solutions:**
 1.  **Keep the Tab Visible:** Drag the Grok tab into its own separate window so it remains "visible" on your screen, even if behind other windows.
-2.  **Configure Throttling:** Chrome has made it harder to disable this completely. See this discussion for current workarounds: [Reddit Discussion](https://www.reddit.com/r/incremental_games/comments/1isgt0s/did_google_remove_the_ability_to_turn_off_tab/).
+2.  **Disable Throttling (Advanced):** In `about:config`, you can adjust `dom.min_background_timeout_value` to reduce throttling for background tabs.
 
 ## Support
 
@@ -96,7 +95,7 @@ Please report any issue here. Please include the following information when repo
     *   Go to **Main** tab.
     *   Click **Download** next to Debug Logs.
 3.  **Operating System** (e.g. Ubuntu 24.04 LTS, macOS Sequoia).
-4.  **Browser** (e.g. Brave Browser, Chrome).
+4.  **Browser** (e.g. Firefox Developer Edition, Firefox Nightly).
 5.  **Grok Interface Language** (e.g. English, German).
 
 ## 🚧 Roadmap / Work in Progress
