@@ -1,17 +1,15 @@
 {
-  "manifest_version": 3,
-  "name": "Grok Imagine Loop",
-  "version": "1.6.2",
-  "description": "Port of Chrome Extension v1.6. Automates Grok Imagine to create looped video sequences.",
+  "manifest_version": 2,
+  "name": "Grok Imagine Loop (Firefox)",
+  "version": "1.6.3",
+  "description": "Automates Grok Imagine to create looped video sequences (Firefox version).",
   "permissions": [
     "activeTab",
     "storage",
     "unlimitedStorage",
     "downloads",
     "scripting",
-    "tabs"
-  ],
-  "host_permissions": [
+    "tabs",
     "https://x.com/*",
     "https://twitter.com/*",
     "https://grok.com/*",
@@ -20,18 +18,14 @@
     "https://imagine-public.x.ai/*",
     "https://assets.grokusercontent.com/*"
   ],
-  "action": {
+  "browser_action": {
     "default_title": "Open Grok Loop",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
-    }
-  },
-  "sidebar_action": {
-    "default_title": "Grok Imagine Loop",
-    "default_panel": "popup/popup.html",
-    "default_icon": "icons/icon48.png"
+    },
+    "default_panel": "popup/popup.html"
   },
   "content_scripts": [
     {
@@ -56,7 +50,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "grok-imagine-loop@extensions.allophylus.com",
+      "id": "grok-imagine-loop@fen-pang",
       "strict_min_version": "109.0"
     }
   }
