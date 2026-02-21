@@ -1,64 +1,40 @@
 # Release Notes - Grok Imagine Loop
 
-## v1.6.0.14 (Beta 14)
-- **Feature:** **Multi-Language A/B Test Support:** Automatically detects and skips the "Which video do you prefer?" survey in all supported languages (Chinese, German, Japanese, English, Spanish, etc.).
-- **Fix:** **Enhanced Upscaling Support:**
-    - Fixed German "Upscale" detection by prioritizing the `...` icon over text to prevent misclicks.
-    - Added support for Traditional Chinese ("升級影片") and simplified Chinese variations.
-    - Improved Spanish detection ("Mejorar vídeo") to avoid confusion with "Enhance Prompt".
-    - Restored robust English fallback detection.
-- **Fix:** **Resume Button Reliability:** Fixed a bug where the dashboard buttons would get stuck in a "Resuming..." state if the loop crashed (e.g. max retries). They now correctly reset to "Resume Loop".
+## v1.6.4
+- **Feature:** **Custom Filename Prefix**. Added a new configuration option in the Settings tab to let you prepend a custom text string to all auto-downloaded video filenames (e.g., `MyProject_Scene_`).
+- **Fix:** **Firefox Radix Menu Interactions**. Significantly overhauled the simulated click engine to fully support native `PointerEvents`. This ensures buttons like "Regenerate," "Upscale," and "Send" interact consistently and reliably in stricter browsers like Firefox.
 
+## v1.6.3
+- **Feature:** **Full Multi-Language Support**. The extension now works natively across all supported Grok languages without relying on hardcoded English text.
+- **Fix:** **Structural Button Detection**. Upscale buttons are now identified visually (via the `...` menu) instead of relying on keywords, fixing upscale detection across all languages.
+- **Fix:** **Prompt Replacement**. Completely rewrote the text insertion logic using the Range API to guarantee the text box is cleared before typing the next scene's prompt in the React editor.
+- **Fix:** **Missing `.mp4` Extensions**. Auto-downloaded videos now correctly save with the `.mp4` file extension instead of raw UUID blobs.
+- **Fix:** **Generation Timeout ("Broken Eye")**. Added instant visual detection for Grok's internal server generation failures, allowing the loop to retry immediately rather than waiting 2 minutes.
+- **Fix:** **Post View Escape Hatch**. Built a robust backward navigation system to ensure the loop never gets trapped inside an individual video post between scenes.
+- **Fix:** **Sidebar Accident Prevention**. Improved the button detection logic to strictly ignore the main left sidebar, preventing accidental navigation away from the gallery.
 
-## v1.6.0.13 (Beta 13)
-- **Fix:** Fixed a critical issue where "Resume Loop" would accidentally click the "Clear/Delete" (X) button on the main toolbar, causing the generation to vanish. The extension now strictly targets only "X" buttons attached to *uploaded* thumbnails.
-- **Debug:** Added clearer logging for Language Detection and Attachment Cleaning to help troubleshoot multi-language environments.
+## v1.6.1 (Stable)
+*Consolidates all Beta 1-14 changes into a stable release.*
 
+### Features
+- **🌍 Multi-Language Support:** Works in English, Spanish, French, German, Chinese (Simplified/Traditional), Japanese, Russian, and Portuguese.
+- **🧪 A/B Test Handling:** Automatically detects and skips the "Which video do you prefer?" survey in all supported languages.
+- **✨ Global Suffix:** Append consistent style text to all prompts (e.g., "photorealistic, 8k").
+- **⏸️ Pause After Video:** Option to stop loop after each video generation for manual review.
 
-## v1.6.0.12 (Beta 12)
-- **Fix:** "Pause on Error" now correctly pauses the loop if "Proactive Frame Extraction" fails after all retries. Previously, it would log the error but continue to the next segment without an image.
+### Fixes
+- **Resume Button Reliability:** Fixed buttons getting stuck in "Resuming..." state after loop crashes.
+- **Enhanced Upscaling:** Fixed detection for German, Chinese, Spanish, and French interfaces.
+- **"Clear/Delete" Misclick:** Fixed Resume accidentally clicking the X button on the toolbar.
+- **Pause on Error:** Now correctly pauses when frame extraction fails.
+- **Scene 1 Regeneration:** No longer re-uploads stale images from previous runs.
+- **Make Video Button:** Improved detection, strictly ignores sidebar navigation.
+- **Regenerate with Edits:** Now uses the edited prompt text instead of the original.
+- **Frame Extraction Retries:** Automatic 3x retries for extraction failures.
+- **Real-Time Config Updates:** Settings update instantly without restart.
+- **Input Cleanup:** Proactive cleanup before each generation to prevent residual attachments.
 
-## v1.6.0.11 (Beta 11)
-- **Feature:** Added Multi-Language Support! The extension now supports Grok in English, Spanish, French, German, Chinese (Simplified/Traditional), Japanese, Russian, and Portuguese.
-- **Refactor:** Updated all button selectors to use a robust dictionary of localized terms.
-
-## v1.6.0.10 (Beta 10)
-- **Fix:** Added automatic retries (3 attempts) for "Proactive Frame Extraction" failures. This prevents the "extraction failed" error from stopping your workflow or causing missing frames in the next segment.
-- **Fix:** Improved error logging to catch and display detailed error messages.
-
-## v1.6.0.9 (Beta 9)
-- **UI:** Renamed "Skip Failed Segments" setting to **"Pause on Error"** to make the behavior clearer.
-    - Checked = Workflow pauses if an error occurs (Default).
-    - Unchecked = Workflow skips failed segments and continues.
-
-## v1.6.0.8 (Beta 8)
-- **Fix:** "Pause After Scene" setting now updates instantly while the loop is running. Previously, you had to restart the loop for this change to take effect.
-- **Refactor:** Removed legacy code.
-
-## v1.6.0.7 (Beta 7)
-- **Fix:** Fixed an issue where adding new scenes to a finished loop and clicking "Resume" would incorrectly restart the loop from the beginning. It now correctly resumes processing the new scenes.
-
-## v1.6.0.6 (Beta 6)
-- **Fix:** Enhanced "Scene 1 Regeneration" fix with aggressive input cleanup. The extension now actively removes any residual image attachments in Grok's input box before starting a new generation, ensuring a completely clean state.
-
-## v1.6.0.5 (Beta 5)
-- **Fix:** Improved "Make Video" button detection to find floating footers while strictly ignoring sidebar navigation (Final fix for "Sidebar Misclick" vs "Button Not Found").
-- **Fix:** Clicking "Regenerate" next to a scene now correctly uses the *edited* prompt from the text box, instead of the original prompt.
-- **Fix:** Regenerating the First Scene (Scene 1) no longer accidentally re-uploads the last frame of a previous run as an input image.
-
-## v1.6.0.4 (Beta 4)
-- **Fix:** "Start Generation" button is now sticky at the bottom with a robust layout (no longer overlaps content).
-- **Fix:** Resume from Pause now correctly handles finding the "Make video" prompt area.
-- **Fix:** Resume loop after uploading a new Start Frame now works correctly (Fixed Blob error).
-- **Fix:** Editing scenes (e.g. removing an image) no longer causes video previews to disappear.
-- **Fix:** "Upscale" button search is now scoped to prevent misclicking the sidebar "More" menu.
-
-## v1.6.0
-- **Feature:** **Pause After Video:** Added Option to stop loop after each video generation (useful for manual review).
-- **Fix:** Fixed Debug Log Console visibility issue on startup.
-- **Fix:** Fixed "Pause Loop" button state synchronization.
-- **Feature:** **Global Suffix / Style:** Added a new "Global Suffix" field. Text entered here is automatically appended to *every* scene's prompt. Perfect for maintaining consistent styles (e.g., "photorealistic, 8k") across an entire loop without manual repetition.
-- **Persistence:** Global Suffix is saved/loaded with your presets.
+---
 
 ## v1.5.3
 - **Fix:** **Regenerate with Edits**: Fixed a bug where editing a prompt in the Side Panel and clicking "Regenerate" (in the Active Run list) would use the old/stale prompt. It now correctly applies your latest edits.
