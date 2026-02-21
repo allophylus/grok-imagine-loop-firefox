@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Grok Imagine Loop",
-  "version": "1.6.0.14",
+  "version": "1.6.3",
   "description": "Port of Chrome Extension v1.6. Automates Grok Imagine to create looped video sequences.",
   "permissions": [
     "activeTab",

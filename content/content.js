@@ -15,35 +15,250 @@ if (window.GrokLoopInjected) {
     // --- Selectors ---
     // --- Multi-Language Support ---
     const TRANSLATIONS = {
-        send: ['send', 'post', 'submit', 'enviar', 'publicar', 'envoyer', 'publier', 'absenden', 'senden', 'veröffentlichen', '发送', '发布', '送信', '投稿', 'отправить', 'enviar'],
-        makeVideo: ['make video', 'generate', 'create video', 'crear video', 'generar', 'créer une vidéo', 'générer', 'video erstellen', 'generieren', '生成视频', '制作视频', '動画を作成', 'создать видео', 'criar vídeo'],
-        upload: ['add photos', 'add image', 'upload', 'añadir', 'subir', 'ajouter', 'importer', 'hochladen', 'hinzufügen', '添加', '上传', '追加', 'загрузить', 'adicionar'],
-        regenerate: ['redo', 'regenerate', 'try again', 'retry', 'vary', 'regenerar', 'intentar de nuevo', 'variar', 'régénérer', 'réessayer', 'neu erzeugen', 'erneut versuchen', '重新生成', '再試行', 'регенерировать', 'regenerar'],
-        remove: ['remove', 'delete', 'close', 'eliminar', 'quitar', 'cerrar', 'supprimer', 'fermer', 'entfernen', 'schließen', '删除', '关闭', '削除', '閉じる', 'удалить', 'remover', 'fechar'],
-        moderation: ['content moderated', 'try a different idea', 'contenido moderado', 'contenu modéré', 'moderiert', '内容已过滤', '內容已過濾', '不適切なコンテンツ', 'контент модерируется', 'conteúdo moderado'],
+        send: [
+            'send', 'post', 'submit', // English
+            'enviar', 'publicar', // Spanish, Portuguese
+            'envoyer', 'publier', // French
+            'absenden', 'senden', 'veröffentlichen', // German
+            '发送', '发布', // Chinese (Simplified)
+            '發送', '發布', // Chinese (Traditional)
+            '送信', '投稿', // Japanese
+            'отправить', // Russian
+            'gönder', 'yayınla', // Turkish
+            'kirmizi', 'kirim', // Indonesian
+            'versturen', 'plaatsen', // Dutch
+            'invia', 'pubblica', // Italian
+            'wyslij', 'wyślij', 'opublikuj', // Polish
+            'trimitere', 'publica', // Romanian
+            'skicka', 'publicera', // Swedish
+            'gửi', 'đăng', // Vietnamese
+            'odeslat', 'zveřejnit', // Czech
+            'küldés', 'közzététel', // Hungarian
+            'إرسال', 'نشر', // Arabic
+            'ارسال', 'انتشار', // Persian (Farsi)
+            'bago', 'ipadala', // Filipino (Tagalog) - 'ipadala' = send
+            '보내기', '게시', // Korean
+            'भेजें', 'post', // Hindi
+            'পাঠান', 'post', // Bengali
+            'पाठवा', // Marathi
+            'அனுப்பு', // Tamil
+            'ப public', // Tamil (likely post/publish context dependent, keeping simple)
+            'pampishandi', // Telugu (approx) -> 'pampinku' is send
+            'nadisonla', // Telugu
+            'відправити', 'опублікувати' // Ukrainian
+        ],
+        makeVideo: [
+            'make video', 'generate', 'create video', // English
+            'crear video', 'generar', // Spanish
+            'créer une vidéo', 'générer', // French
+            'video erstellen', 'generieren', // German
+            '生成视频', '制作视频', // Chinese (Simplified)
+            '生成影片', '製作影片', // Chinese (Traditional)
+            '動画を作成', // Japanese
+            'создать видео', // Russian
+            'video oluştur', 'oluştur', // Turkish
+            'buat video', // Indonesian
+            'video maken', // Dutch
+            'crea video', 'genera', // Italian
+            'utwórz wideo', 'generuj', // Polish
+            'creează video', // Romanian
+            'skapa video', // Swedish
+            'tạo video', // Vietnamese
+            'vytvořit video', // Czech
+            'videó készítése', // Hungarian
+            'إنشاء فيديو', // Arabic
+            'ساخت ویدیو', // Persian
+            'gumawa ng video', // Filipino
+            '동영상 만들기', '생성', // Korean
+            'video banaye', // Hindi
+            'ভিডিও তৈরি করুন', // Bengali
+            'video banva', // Marathi
+            'வீடியோ உருவாக்கு', // Tamil
+            'video tayar', // Telugu
+            'створити відео' // Ukrainian
+        ],
+        upload: [
+            'add photos', 'add image', 'upload', // English
+            'añadir', 'subir', // Spanish
+            'ajouter', 'importer', // French
+            'hochladen', 'hinzufügen', // German
+            '添加', '上传', // Chinese (Simplified)
+            '新增', '上傳', // Chinese (Traditional)
+            '追加', // Japanese
+            'загрузить', // Russian
+            'yükle', 'ekle', // Turkish
+            'unggah', 'tambah', // Indonesian
+            'uploaden', 'toevoegen', // Dutch
+            'carica', 'aggiungi', // Italian
+            'prześlij', 'dodaj', // Polish
+            'încarcă', 'adaugă', // Romanian
+            'ladda upp', 'lägg till', // Swedish
+            'tải lên', 'thêm', // Vietnamese
+            'nahrát', 'přidat', // Czech
+            'feltöltés', 'hozzáadás', // Hungarian
+            'تحميل', 'إضافة', // Arabic
+            'بارگذاری', 'افزودن', // Persian
+            'mag-upload', 'magdagdag', // Filipino
+            '업로드', '추가', // Korean
+            'upload', 'jode', // Hindi
+            'aplod', // Bengali
+            'upload', // Marathi
+            'yetr', // Tamil (upload)
+            'ekk', // Telugu (upload)
+            'adicionar', // Portuguese
+            'завантажити', 'додати' // Ukrainian
+        ],
+        regenerate: [
+            'redo', 'regenerate', 'try again', 'retry', 'vary', // English
+            'regenerar', 'intentar de nuevo', 'variar', // Spanish
+            'régénérer', 'réessayer', // French
+            'neu erzeugen', 'erneut versuchen', // German
+            '重新生成', // Chinese (Simplified)
+            '重新生成', // Chinese (Traditional)
+            '再試行', // Japanese
+            'регенерировать', // Russian
+            'yeniden oluştur', 'tekrar dene', // Turkish
+            'buat ulang', 'coba lagi', // Indonesian
+            'opnieuw', 'probeer opnieuw', // Dutch
+            'rigenera', 'riprova', // Italian
+            'wygeneruj ponownie', 'spróbuj ponownie', // Polish
+            'regenerează', 'încearcă din nou', // Romanian
+            'regenerera', 'försök igen', // Swedish
+            'tạo lại', 'thử lại', // Vietnamese
+            'regenerovat', 'zkusit znovu', // Czech
+            'újragonerálás', 'próbáld újra', // Hungarian
+            'إعادة التوليد', 'حاول مرة أخرى', // Arabic
+            'تولید مجدد', 'تلاش مجدد', // Persian
+            'muling buuin', // Filipino
+            '재생성', '다시 시도', // Korean
+            'phir se banaye', // Hindi
+            'abar korun', // Bengali
+            'punha banva', // Marathi
+            'meendum', // Tamil
+            'malli', // Telugu
+            'відтворити', 'спробувати ще раз' // Ukrainian
+        ],
+        remove: [
+            'remove', 'delete', 'close', // English
+            'eliminar', 'quitar', 'cerrar', // Spanish
+            'supprimer', 'fermer', // French
+            'entfernen', 'schließen', // German
+            '删除', '关闭', // Chinese (Simplified)
+            '刪除', '關閉', // Chinese (Traditional)
+            '削除', '閉じる', // Japanese
+            'удалить', // Russian
+            'kaldır', 'sil', 'kapat', // Turkish
+            'hapus', 'tutup', // Indonesian
+            'verwijderen', 'sluiten', // Dutch
+            'rimuovi', 'elimina', 'chiudi', // Italian
+            'usuń', 'zamknij', // Polish
+            'elimina', 'închide', // Romanian
+            'ta bort', 'stäng', // Swedish
+            'xóa', 'đóng', // Vietnamese
+            'odstranit', 'zavřít', // Czech
+            'eltávolít', 'bezár', // Hungarian
+            'إزالة', 'حذف', 'إغلاق', // Arabic
+            'حذف', 'بستن', // Persian
+            'alisin', 'isara', // Filipino
+            '삭제', '닫기', // Korean
+            'hataye', 'band kare', // Hindi
+            'muche felun', // Bengali
+            'kadhun taka', // Marathi
+            'neeku', // Tamil
+            'tīsi', // Telugu
+            'remover', 'fechar', // Portuguese
+            'видалити', 'закрити' // Ukrainian
+        ],
+        moderation: [
+            'content moderated', 'try a different idea', // English
+            'contenido moderado', // Spanish
+            'contenu modéré', // French
+            'moderiert', // German
+            '内容已过滤', // Chinese (Simplified)
+            '內容已過濾', // Chinese (Traditional)
+            '不適切なコンテンツ', // Japanese
+            'контент модерируется', // Russian
+            'içerik denetlendi', // Turkish
+            'konten dimoderasi', // Indonesian
+            'inhoud gemodereerd', // Dutch
+            'contenuto moderato', // Italian
+            'treść moderowana', // Polish
+            'conținut moderat', // Romanian
+            'innehåll modererat', // Swedish
+            'nội dung đã kiểm duyệt', // Vietnamese
+            'obsah moderován', // Czech
+            'tartalom moderálva', // Hungarian
+            'محتوى خاضع للإشراف', // Arabic
+            'محتوا تعدیل شد', // Persian
+            'na-moderate ang nilalaman', // Filipino
+            '콘텐츠 검토됨', // Korean
+            'samagri sanyamit', // Hindi (Approx)
+            'moderet', // Bengali (borrowed)
+            'conteúdo moderado', // Portuguese
+            'контент модерується' // Ukrainian
+        ],
         upscale: [
-            'upscale', 'enhance', // English
+            'upscale', 'enhance', 'hd', 'alta definizione', 'high definition', // English & generic
             'escalar', 'mejorar vídeo', 'mejorar video', 'optimizar', // Spanish
             'rehausser', 'améliorer la vidéo', 'améliorer', 'optimiser', // French
-            'hochskalieren', 'verbessern', 'optimieren', // German (Restored 'verbessern' but it's safe now due to priority logic)
+            'hochskalieren', 'verbessern', 'optimieren', // German
             '放大', '增强', '升级', '超分', '优化', // Chinese (Simplified)
             '升級', '升級影片', // Chinese (Traditional)
             'アップスケール', '高画質化', '強化', '改善', // Japanese
             'улучшить', 'масштабировать', 'оптимизировать', // Russian
-            'melhorar', 'otimizar' // Portuguese
+            'melhorar', 'otimizar', // Portuguese
+            'iyileştir', // Turkish
+            'tingkatkan', // Indonesian
+            'opschalen', // Dutch
+            'migliora', 'ottimizza video', // Italian
+            'skaluj', 'ulepsz', // Polish
+            'îmbunătățește', // Romanian
+            'uppskala', // Swedish
+            'nâng cấp', // Vietnamese
+            'zvětšit', 'vylepšit', // Czech
+            'javítás', 'felskálázás', // Hungarian
+            'تحسين', // Arabic
+            'ارتقا', // Persian
+            'pabutihin', // Filipino
+            '업스케일', '향상', // Korean
+            'sudhare', // Hindi
+            'unnoto', // Bengali
+            'vadhva', // Marathi
+            'mempat', // Tamil
+            'penchu', // Telugu
+            'покращити' // Ukrainian
         ],
-        more: ['more', 'options', 'más', 'plus', 'mehr', '更多', 'その他', 'еще', 'mais'],
-        edit: ['edit', 'change', 'modify', 'editar', 'modifier', 'bearbeiten', '编辑', '編集', 'изменить'],
-        skip: ['skip', 'pass', 'saltar', 'passer', 'überspringen', '跳过', 'スキップ', 'пропустить', 'pular']
+        more: ['more', 'options', 'más', 'plus', 'mehr', '更多', 'その他', 'еще', 'mais', 'daha', 'lainnya', 'meer', 'altro', 'więcej', 'mai mult', 'mer', 'thêm', 'více', 'több', 'المزيد', 'بیشتر', 'higit pa', '더 보기', 'aur', 'aro', 'ankhin', 'melum', 'marian', 'ще'],
+        edit: ['edit', 'change', 'modify', 'editar', 'modifier', 'bearbeiten', '编辑', '編集', 'изменить', 'düzenle', 'ubah', 'bewerken', 'modifica', 'edytuj', 'editează', 'redigera', 'chỉnh sửa', 'upravit', 'szerkesztés', 'تعديل', 'ویرایش', 'i-edit', '편집', 'badle', 'sompadon', 'badla', 'thiruthu', 'marpp', 'redahuvat'],
+        skip: ['skip', 'pass', 'saltar', 'passer', 'überspringen', '跳过', 'スキップ', 'пропустить', 'pular', 'atla', 'lewati', 'overslaan', 'salta', 'pomiń', 'sari', 'hoppa över', 'bỏ qua', 'přeskočit', 'kihagyás', 'تخطي', 'رد شدن', 'laktawan', '건너뛰기', 'chode', 'bad din', 'soda', 'thavir', 'vadul', 'пропустити'],
+        rateLimit: [
+            'rate limit reached', 'upgrade to unlock more', 'limit exceeded', 'too many requests', // English
+            'límite de velocidad', 'límite alcanzado', 'demasiadas peticiones', // Spanish
+            'limite de débit', 'limite atteinte', 'trop de requêtes', // French
+            'ratenlimit erreicht', 'limit überschritten', // German
+            '达到了速率限制', '超过限制', '请求过多', // Chinese (Simplified)
+            '達到速率限制', '超過限制', // Chinese (Traditional)
+            'レート制限', '上限に達しました', // Japanese
+            'превышен лимит', 'слишком много запросов', // Russian
+            'limite de taxa', 'demasiadas solicitações', // Portuguese
+            'rate limit', 'limit' // Generic fallbacks
+        ],
+        imagineMode: [
+            'imagine', 'video', 'vídeo', 'vidéo', 'визуализировать', 'ভিডিও', 'വീഡിയോ', 'vidéo',
+            'إيماجن', ' تصور', 'видя', '视频', '影片'
+        ]
     };
 
     // --- Selectors ---
     const SELECTORS = {
         textArea: 'textarea, div[contenteditable="true"], div[role="textbox"]',
+        // New Grok UI (Feb 2026) uses specific role-based textbox paragraphs
+        promptInput: 'div[role="textbox"] p, paragraph[role="presentation"], div[role="textbox"]',
         // Note: Specific button selectors now handled dynamically via TRANSLATIONS
         uploadButton: 'button[aria-label], button[title], button svg rect',
         sendButton: 'button[type="submit"], button[aria-label]',
-        grokUpload: 'button[aria-label]'
+        grokUpload: 'button[aria-label]',
+        imagineMode: 'button' // Dynamic search used in sendPromptToGrok
     };
 
     // --- State ---
@@ -102,7 +317,8 @@ if (window.GrokLoopInjected) {
             try {
                 const safeArgs = args.map(a => {
                     try {
-                        if (typeof a === 'object') return JSON.parse(JSON.stringify(a));
+                        if (a instanceof Error) return { message: a.message, stack: a.stack, name: a.name };
+                        if (typeof a === 'object' && a !== null) return JSON.parse(JSON.stringify(a));
                         return a;
                     } catch (e) {
                         return String(a);
@@ -172,22 +388,26 @@ if (window.GrokLoopInjected) {
     async function insertTextFast(element, text) {
         element.focus();
 
-        // Clear first
+        // Clear and Replace Strategy
         if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
             element.value = '';
         } else if (element.isContentEditable) {
-            document.execCommand('selectAll', false, null);
-            document.execCommand('delete', false, null);
+            // 1. Explicitly select all contents using Range API (fixes React/Slate edge cases where execCommand 'selectAll' fails)
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            // 2. Immediately overwrite the selection with the new text using insertText
+            // This is identical to a human pressing Cmd+A then Cmd+V
+            document.execCommand('insertText', false, text);
         }
 
         await new Promise(r => setTimeout(r, 50));
 
-        // Fast Insertion (Simulate Paste)
-        if (element.tagName === 'DIV' && element.isContentEditable) {
-            // execCommand 'insertText' mimics a user typing or pasting plain text
-            // It triggers input events automatically and works well with React
-            document.execCommand('insertText', false, text);
-        } else {
+        // For Textarea/Input (ContentEditable is already handled above)
+        if (element.tagName !== 'DIV' || !element.isContentEditable) {
             // For Textarea/Input, we need to be careful with React state
             const descriptor = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value") ||
                 Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
@@ -306,19 +526,10 @@ if (window.GrokLoopInjected) {
     async function uploadImageToGrok(input) {
         let fileInput = document.querySelector('input[type="file"]');
 
-        // Gentle Back Logic
+        // Note: The "Gentle Back" logic previously here was moved to processSegment() 
+        // to ensure it triggers even when no image is being uploaded.
+
         if (!fileInput) {
-            console.log('File input not found. Checking for Modal/Lightbox close...');
-            const closeButton = document.querySelector('button[aria-label="Close"]') || document.querySelector('button[aria-label="Back"]');
-
-            if (closeButton) {
-                console.log('In Post View. Navigation is required to upload next image.');
-                closeButton.click();
-                await new Promise(r => setTimeout(r, 1500));
-
-                fileInput = document.querySelector('input[type="file"]');
-                if (fileInput) console.log('File input found after navigation.');
-            }
 
             if (!fileInput) {
                 const buttons = Array.from(document.querySelectorAll('button'));
@@ -366,18 +577,35 @@ if (window.GrokLoopInjected) {
         const maxRetries = Math.ceil(timeoutMs / retryDelay);
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
-            // ... (selector logic same as before) ...
             console.log(`Searching for input area (${attempt + 1}/${maxRetries})...`);
 
-            // 1. Precise selectors
-            inputArea = document.querySelector('div[contenteditable="true"][role="textbox"]') ||
+            // 0. Ensure Imagine Mode is active (Feb 2026 UI)
+            const imagineBtn = Array.from(document.querySelectorAll('button')).find(b => {
+                // EXTREMELY IMPORTANT: Do not click the main Grok "Imagine" app icon in the sidebar nav
+                if (b.closest('nav') || b.closest('aside') || b.closest('[role="navigation"]')) return false;
+
+                const text = (b.innerText || b.textContent || b.ariaLabel || b.title || '').toLowerCase();
+                // Match translations for "Imagine", "Video", "Vídeo" etc.
+                return TRANSLATIONS.imagineMode.some(k => text.includes(k));
+            });
+            if (imagineBtn && !imagineBtn.classList.contains('active') && !imagineBtn.getAttribute('aria-selected')) {
+                // Heuristic to avoid clicking the wrong "Video" button. The mode toggle is usually a small button or a dropdown.
+                // We'll trust the selector.
+                console.log('Activating Imagine/Video mode...');
+                imagineBtn.click();
+                await new Promise(r => setTimeout(r, 1000));
+            }
+
+            // 1. Precise selectors (Updated for Feb 2026)
+            inputArea = document.querySelector(SELECTORS.promptInput) ||
+                document.querySelector('div[contenteditable="true"][role="textbox"]') ||
                 document.querySelector('textarea[placeholder*="customize"]') ||
                 document.querySelector('input[placeholder*="customize"]');
 
             if (inputArea) break;
 
             // 2. Loose selectors
-            const candidates = Array.from(document.querySelectorAll('textarea, input[type="text"], div[contenteditable="true"]'));
+            const candidates = Array.from(document.querySelectorAll('textarea, input[type="text"], div[contenteditable="true"], p[role="presentation"]'));
             const visibleCandidates = candidates.filter(el => {
                 const style = window.getComputedStyle(el);
                 return style.display !== 'none' && style.visibility !== 'hidden' && el.offsetParent !== null;
@@ -386,7 +614,7 @@ if (window.GrokLoopInjected) {
             // 2a. Strict Check
             inputArea = visibleCandidates.find(el => {
                 const placeholder = (el.placeholder || el.getAttribute('aria-placeholder') || el.innerText || '').toLowerCase();
-                return placeholder.includes('video') || placeholder.includes('customize') || placeholder.includes('prompt');
+                return placeholder.includes('video') || placeholder.includes('vídeo') || placeholder.includes('customize') || placeholder.includes('prompt') || placeholder.includes('imagin');
             });
 
             // 2b. Fallback
@@ -513,9 +741,33 @@ if (window.GrokLoopInjected) {
                 const possibleBtns = container.querySelectorAll('button');
                 possibleBtns.forEach(b => {
                     const label = (b.ariaLabel || b.title || '').toLowerCase();
-                    if (TRANSLATIONS.remove.some(k => label.includes(k))) {
+
+                    // Strict filters to avoid clicking X buttons for modals/sidebars
+                    // Skip if button is not truly part of the attachment thumbnail
+                    if (b.closest('nav') || b.closest('aside') || b.closest('[role="navigation"]')) {
+                        return; // Skip navigation elements
+                    }
+
+                    // Check if label matches a remove keyword
+                    const isRemoveBtn = TRANSLATIONS.remove.some(k => label.includes(k));
+
+                    // Additional safety: "close" alone is too generic
+                    // Must match more specific keywords like "remove", "delete", "eliminate", etc.
+                    // OR be near the actual thumbnail element
+
+                    // We check if it matches ANY generic "close" term across languages
+                    const genericCloseTerms = ['close', 'cerrar', 'fermer', 'schließen', 'chiudi', 'zamknij', 'zavřít', 'fechar'];
+                    const isGenericCloseLabel = genericCloseTerms.some(term => label.trim() === term);
+                    const hasCloseKeyword = genericCloseTerms.some(term => label.includes(term));
+
+                    if (isRemoveBtn && !isGenericCloseLabel) {
+                        // If it says "close" but also has other keywords, it's likely an attachment close button
+                        removeBtns.push(b);
+                    } else if (!hasCloseKeyword && isRemoveBtn) {
+                        // If it matches remove/delete without the ambiguous "close", it's safe
                         removeBtns.push(b);
                     }
+                    // Skip if label is just "close" - too risky
                 });
             }
         });
@@ -529,6 +781,9 @@ if (window.GrokLoopInjected) {
                 // Double check it's not the main upload button
                 const label = (btn.ariaLabel || btn.title || '').toLowerCase();
                 if (TRANSLATIONS.upload.some(k => label.includes(k))) continue;
+
+                // Final safety check: verify button is still in DOM and visible
+                if (!document.contains(btn) || btn.offsetParent === null) continue;
 
                 btn.click();
                 await new Promise(r => setTimeout(r, 200));
@@ -575,9 +830,10 @@ if (window.GrokLoopInjected) {
 
                 // Check for Content Moderation / Rate Limit via BROAD Text Scan
                 // (More robust than finding specific elements which might change classes)
-                const bodyText = document.body.innerText;
+                const bodyText = document.body.innerText.toLowerCase();
 
-                if (bodyText.includes('Rate limit reached') || bodyText.includes('Upgrade to unlock more')) {
+                // Multi-Language Rate Limit Check
+                if (TRANSLATIONS.rateLimit.some(k => bodyText.includes(k))) {
                     console.warn('Rate Limit Detected (Text Scan)!');
                     cleanup();
                     reject(new Error('Rate Limit Reached'));
@@ -585,12 +841,11 @@ if (window.GrokLoopInjected) {
                 }
 
                 // Multi-Language Moderation Check
-                if (TRANSLATIONS.moderation.some(k => bodyText.toLowerCase().includes(k))) {
+                if (TRANSLATIONS.moderation.some(k => bodyText.includes(k))) {
                     // Verify it's not just in the prompt textarea
                     // Find the element containing this text to be sure it's an alert/toast
                     const hints = Array.from(document.querySelectorAll('div, span, p')).filter(el =>
-                        el.innerText && (el.innerText.includes('Content Moderated') || el.innerText.includes('Try a different idea'))
-                        && el.offsetParent !== null
+                        el.innerText && TRANSLATIONS.moderation.some(k => el.innerText.toLowerCase().includes(k)) && el.offsetParent !== null
                     );
 
                     // If we found a visible element with this text, likely the toast
@@ -600,6 +855,33 @@ if (window.GrokLoopInjected) {
                         reject(new Error('Content Moderated'));
                         return;
                     }
+                }
+
+                // Check for "Broken Eye" Generation Failure icon
+                // The broken eye icon usually indicates a silent generation failure or error states
+                const svgs = Array.from(document.querySelectorAll('svg'));
+                const hasBrokenEye = svgs.some(svg => {
+                    // Ignore small UI buttons (like an 'X' or cancel) which might accidentally match the path heuristic
+                    const rect = svg.getBoundingClientRect();
+                    if (rect.width < 40 || rect.height < 40) return false;
+
+                    // Check if the SVG or its paths contain attributes typical of the slashed eye icon
+                    // We look for 'd' paths that represent a slash (often long diagonal coordinates)
+                    const paths = Array.from(svg.querySelectorAll('path')).map(p => p.getAttribute('d') || '');
+
+                    // The slashed eye icon typically has a path for the slash: e.g. M3 3l18 18 or similar diagonal
+                    // and paths for the eye. We check for a general heuristic:
+                    const hasSlashPath = paths.some(d => d.includes('M2 2l20 20') || d.includes('m2 2 20 20') || d.includes('M3 3l18 18') || d.includes('m3 3 18 18') || d.includes('L22 22') || d.includes('l18 18'));
+                    const isPotentiallyEye = paths.some(d => d.includes('A') || d.includes('a') || d.includes('c') || d.includes('C')); // Curves for the eye
+
+                    return hasSlashPath && isPotentiallyEye && svg.offsetParent !== null;
+                });
+
+                if (hasBrokenEye) {
+                    console.warn('Generation Failure Detected (Broken Eye Icon)!');
+                    cleanup();
+                    reject(new Error('Generation Failed (Broken UI Icon)'));
+                    return;
                 }
             };
 
@@ -627,8 +909,25 @@ if (window.GrokLoopInjected) {
                 // Ignore navigation elements
                 if (el.closest('nav') || el.closest('[role="navigation"]')) return false;
 
-                const content = (el.innerText || el.ariaLabel || el.textContent || '').toLowerCase();
-                const match = translationKeys.find(k => content.includes(k));
+                const svgTitle = el.querySelector('svg title')?.textContent || '';
+                const content = (el.innerText || el.ariaLabel || el.title || el.textContent || svgTitle).toLowerCase();
+
+                // Explicitly EXCLUDE the Imagine/Video toggle button
+                if (TRANSLATIONS.imagineMode.some(k => content === k || content.includes(k))) {
+                    // Check if it's likely the main mode toggle (usually just says "Video" or "Imagine" without other text like "Make Video")
+                    // A safer heuristic: If the button is active and we are trying to upscale, it shouldn't be the mode toggle.
+                    const isActive = el.classList.contains('active') || el.getAttribute('aria-selected') === 'true';
+                    if (isActive || content.trim().length < 15) { // Mode toggles usually have very short text
+                        return false;
+                    }
+                }
+
+                const match = translationKeys.find(k => {
+                    // special handling for short keywords like "hd" to require word boundaries
+                    if (k === 'hd') return content === 'hd' || content.includes(' hd') || content.includes('hd ') || content.includes(' hd ') || content.includes('[hd');
+                    return content.includes(k);
+                });
+
                 if (match && !el.disabled) {
                     console.log(`[Upscale Debug] Match found for keys [${translationKeys[0]}...]: "${match}" in "${content}"`);
                     return true;
@@ -637,22 +936,66 @@ if (window.GrokLoopInjected) {
             });
         };
 
-        // 1. Try finding 'Upscale' directly
-        let upscaleBtn = findLocalizedBtn(TRANSLATIONS.upscale, mainContent);
+        // NEW STRATEGY: Structural DOM Proximity
+        // 1. Find the universal "More" button (...) first
+        let moreBtn = Array.from(mainContent.querySelectorAll('button')).find(b => {
+            if (b.closest('nav') || b.closest('[role="navigation"]')) return false;
+
+            // Check for text "..."
+            const text = (b.innerText || b.ariaLabel || b.title || '').toLowerCase();
+            if (text.includes('...') || text.includes('…') || TRANSLATIONS.more.some(k => text.includes(k))) return true;
+
+            // Check for SVG structure (3 dots = 3 circles or a path drawing 3 dots)
+            const svgs = b.querySelectorAll('svg');
+            if (svgs.length > 0) {
+                for (let svg of svgs) {
+                    const title = (svg.querySelector('title')?.textContent || '').toLowerCase();
+                    if (TRANSLATIONS.more.some(k => title.includes(k))) return true;
+
+                    // Heuristic: Does the SVG have exactly 3 circles? (Standard "... " icon)
+                    const circles = svg.querySelectorAll('circle');
+                    if (circles.length === 3) return true;
+                }
+            }
+            return false;
+        });
+
+        let upscaleBtn = null;
+
+        if (moreBtn) {
+            console.log('Found "More (...)" button for structural reference.');
+            // 2. The Upscale button is typically the immediate previous sibling in the toolbar
+            const prevSibling = moreBtn.previousElementSibling;
+
+            // Verify the sibling is a button or has SVG
+            if (prevSibling && (prevSibling.tagName === 'BUTTON' || prevSibling.querySelector('svg'))) {
+                console.log('Found Upscale button via structural proximity (previous sibling)!');
+                upscaleBtn = prevSibling;
+            } else {
+                console.log('Previous sibling is not a button. Checking container...');
+                // Fallback structual: get all buttons in the container and take the one before `moreBtn`
+                const container = moreBtn.parentElement;
+                if (container) {
+                    const siblings = Array.from(container.querySelectorAll('button'));
+                    const moreIndex = siblings.indexOf(moreBtn);
+                    if (moreIndex > 0) {
+                        upscaleBtn = siblings[moreIndex - 1];
+                        console.log('Found Upscale button via sibling index!');
+                    }
+                }
+            }
+        }
+
+        // 3. Fallback: Try finding 'Upscale' directly via translations if structural check failed
+        if (!upscaleBtn || upscaleBtn.disabled) {
+            console.log('Structural Upscale search failed. Falling back to localized translations...');
+            upscaleBtn = findLocalizedBtn(TRANSLATIONS.upscale, mainContent);
+        }
 
         if (!upscaleBtn) {
             console.log('Upscale button not found directly. Checking "More" menu...');
 
-            // 2. Find "More" button (...) - Scoped to Main
-
-            // Strategy C: Inner Text "..." (Visual Icon - Highest Priority)
-            let moreBtn = Array.from(mainContent.querySelectorAll('button')).find(b => {
-                if (b.closest('nav') || b.closest('[role="navigation"]')) return false;
-                const text = (b.innerText || '').trim();
-                return text.includes('...') || text.includes('…');
-            });
-
-            // Strategy B: Proximity to "Edit" (Refined)
+            // If we didn't find the moreBtn earlier, try other strategies to find it
             if (!moreBtn) {
                 console.log('Strategy C failed. Trying Strategy B (Proximity to Edit)...');
                 const editBtn = findLocalizedBtn(TRANSLATIONS.edit, mainContent);
@@ -661,7 +1004,6 @@ if (window.GrokLoopInjected) {
                     const container = editBtn.parentElement;
                     if (container) {
                         const siblings = Array.from(container.querySelectorAll('button'));
-                        // The "More" button is usually the last one
                         const lastBtn = siblings[siblings.length - 1];
                         if (lastBtn && lastBtn !== editBtn) {
                             console.log('Found potential "More" button via proximity (last sibling).');
@@ -1262,6 +1604,9 @@ if (window.GrokLoopInjected) {
         },
 
         togglePause(shouldResume, resumePayload) {
+            // Default to toggle if no argument provided (e.g. from UI button)
+            if (shouldResume === undefined) shouldResume = !state.isRunning;
+
             state.isRunning = shouldResume;
 
             if (shouldResume) {
@@ -1301,13 +1646,41 @@ if (window.GrokLoopInjected) {
                     });
 
                     // 3. Handle Resume Logic (If we were finished but now have more work)
-                    if (state.currentSegmentIndex === -1 && state.segments.length > 0) {
+                    if (state.currentSegmentIndex === -1 || (state.currentSegmentIndex >= state.segments.length - 1 && ['done', 'error'].some(s => state.segments[state.segments.length - 1].status.includes(s)))) {
                         // Find the first pending segment
-                        const firstPending = state.segments.findIndex(s => s.status === 'pending');
-                        if (firstPending !== -1) {
-                            console.log(`Resume requested on finished loop. Found new pending segment at ${firstPending}. Restarting queue...`);
-                            state.currentSegmentIndex = firstPending;
-                            // Ensure strict mode isn't blocked? existing isRunning=true handles it.
+                        let connectionPoint = state.segments.findIndex(s => s.status === 'pending');
+
+                        // If no pending, look for errors to retry
+                        if (connectionPoint === -1) {
+                            const firstError = state.segments.findIndex(s => s.status.includes('error'));
+                            if (firstError !== -1) {
+                                console.log('Resume: No pending segments. Retrying errors...');
+                                // Reset errors to pending
+                                state.segments.forEach(s => {
+                                    if (s.status.includes('error')) s.status = 'pending';
+                                });
+                                connectionPoint = firstError;
+                            }
+                        }
+
+                        // If still no connection point (all done), Restart Loop?
+                        if (connectionPoint === -1 && state.segments.length > 0) {
+                            console.log('Resume: All done. Restarting loop from scratch...');
+                            state.segments.forEach(s => {
+                                s.status = 'pending';
+                                s.videoUrl = null;
+                                s.inputImage = null; // Clear generated images? Optional. 
+                                // Probably safer to NOT clear inputImage if it was custom.
+                                // But if it was extracted, maybe we should? 
+                                // Let's keep specific resetting minimal. 
+                                // regenerateSegment resets inputImage only if cascaded.
+                            });
+                            connectionPoint = 0;
+                        }
+
+                        if (connectionPoint !== -1) {
+                            console.log(`Resume requested on finished/stopped loop. Restarting queue at ${connectionPoint}...`);
+                            state.currentSegmentIndex = connectionPoint;
                         }
                     }
                 }
@@ -1344,14 +1717,15 @@ if (window.GrokLoopInjected) {
                 // 1. Placeholder Check (Targeted)
                 const inputs = Array.from(document.querySelectorAll('textarea, input[type="text"]'));
                 const foundPlaceholder = inputs.some(el => {
-                    const ph = el.getAttribute('placeholder');
-                    return ph && (ph.includes('Type to customize video') || ph.includes('Customize video'));
+                    const ph = (el.getAttribute('placeholder') || el.innerText || '').toLowerCase();
+                    return ph.includes('type to customize') || ph.includes('type to imagine') || ph.includes('customize video') || ph.includes('imagin');
                 });
 
                 // 2. Button State Check (Backup)
-                const makeBtn = Array.from(document.querySelectorAll('button')).find(b =>
-                    b.innerText.includes('Make video') && !b.disabled && !b.classList.contains('disabled')
-                );
+                const makeBtn = Array.from(document.querySelectorAll('button')).find(b => {
+                    const text = (b.innerText || '').toLowerCase();
+                    return TRANSLATIONS.makeVideo.some(k => text.includes(k)) && !b.disabled && !b.classList.contains('disabled');
+                });
 
                 if (foundPlaceholder || makeBtn) {
                     console.log('Upload success confirmed.');
@@ -1413,12 +1787,15 @@ if (window.GrokLoopInjected) {
                 if (!state.isRunning) break;
             }
 
-            if (state.currentSegmentIndex >= state.segments.length - 1 && state.segments[state.segments.length - 1].status === 'done') {
-                state.isRunning = false;
-                state.currentSegmentIndex = -1;
-                this.dashboard.update();
-                chrome.storage.local.remove('grokLoopState');
-                console.log('Loop finished. State cleared.');
+            if (state.currentSegmentIndex >= state.segments.length - 1) {
+                const lastSeg = state.segments[state.segments.length - 1];
+                if (lastSeg.status === 'done' || lastSeg.status.includes('error')) {
+                    state.isRunning = false;
+                    state.currentSegmentIndex = -1;
+                    this.dashboard.update();
+                    chrome.storage.local.remove('grokLoopState');
+                    console.log('Loop finished. State cleared.');
+                }
             }
         },
 
@@ -1436,7 +1813,31 @@ if (window.GrokLoopInjected) {
                     seg.status = 'working';
                     this.dashboard.update();
 
-                    // 0. Clean Input State (Likely fixes "Leaked Image" bug)
+                    // --- 0. Ensure Main Dashboard (Escape Post View) ---
+                    // Crucial fix: If we are on an individual post from a previous segment,
+                    // we MUST exit to the main gallery/compose view before doing ANYTHING.
+                    if (window.location.pathname.includes('/post/')) {
+                        console.log('Currently in Post View. Navigating back to main compose screen...');
+                        window.history.back();
+                        await new Promise(r => setTimeout(r, 2000));
+
+                        // Fallback click on close/back button if history.back didn't work immediately
+                        if (window.location.pathname.includes('/post/')) {
+                            console.log('Still in Post View. Attempting UI fallback click...');
+                            const buttons = Array.from(document.querySelectorAll('button'));
+                            const closeButton = buttons.find(b => {
+                                const label = (b.ariaLabel || b.title || '').toLowerCase();
+                                return label.includes('back') || TRANSLATIONS.remove.some(k => label.includes(k));
+                            });
+
+                            if (closeButton) {
+                                closeButton.click();
+                                await new Promise(r => setTimeout(r, 1500));
+                            }
+                        }
+                    }
+
+                    // 1. Clean Input State (Likely fixes "Leaked Image" bug)
                     await clearInputAttachments();
 
                     // 1. Input Image
@@ -1623,6 +2024,24 @@ if (window.GrokLoopInjected) {
                         return; // Stop.
                     }
 
+                    // Generation Failure (Broken UI Icon)
+                    if (err.message && err.message.includes('Broken UI Icon')) {
+                        console.warn('Generation Failed internally on Grok side (Broken Eye Icon).');
+                        seg.status = `failed (attempt ${attempt + 1}/${maxRetries + 1})`;
+                        this.dashboard.update();
+
+                        if (attempt >= maxRetries && !state.config.continueOnFailure) {
+                            console.error('Max retries reached for internal generation failure. Pausing.');
+                            state.isRunning = false;
+                            alert(`Loop Paused: Segment ${index + 1} failed repeatedly to generate.\n\nOption 'Continue on Failure' is disabled.`);
+                            return;
+                        }
+
+                        console.log('Retrying in 5 seconds...');
+                        await new Promise(r => setTimeout(r, 5000));
+                        continue; // Retry standard loop
+                    }
+
                     // Content Moderation
                     if (err.message === 'Content Moderated') {
                         // Check if Pause on Moderation is ENABLED
@@ -1744,13 +2163,27 @@ if (window.GrokLoopInjected) {
         },
 
         downloadSegment(index) {
-            // ...
             const seg = state.segments[index];
             if (seg.videoUrl) {
-                chrome.runtime.sendMessage({
-                    action: 'DOWNLOAD_VIDEO',
-                    payload: { url: seg.videoUrl, filename: `grok_loop_segment_${index + 1}.mp4` }
-                });
+                const filename = `grok_loop_segment_${index + 1}.mp4`;
+
+                // For Blob URLs, Background script downloads randomly strip filenames and use UUIDs.
+                // Doing it via an anchor tag in the content script preserves the filename perfectly.
+                if (seg.videoUrl.startsWith('blob:')) {
+                    const a = document.createElement('a');
+                    a.href = seg.videoUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    console.log(`Triggered local download for ${filename}`);
+                } else {
+                    // Fallback to background script for standard URLs (CORS handling)
+                    chrome.runtime.sendMessage({
+                        action: 'DOWNLOAD_VIDEO',
+                        payload: { url: seg.videoUrl, filename: filename }
+                    });
+                }
             }
         }
     };
