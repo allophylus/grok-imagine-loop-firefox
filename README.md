@@ -1,8 +1,15 @@
-# Grok Imagine Loop Extension (Firefox)
+# Grok Imagine Loop Extension
 
-This is a **Firefox** port of the [Grok Imagine Loop Chrome Extension](https://github.com/allophylus/grok-imagine-loop) (v1.6).
+A Chrome Utility Extension to automate video generation loops on [Grok.com](https://grok.com).
 
-A browser extension to automate video generation loops on [Grok.com](https://grok.com). This tool allows you to create seamless video sequences by automatically using the last frame of a generated video as the input for the next generation, creating a continuous "flow" effect.
+This tool allows you to create seamless video sequences by automatically using the last frame of a generated video as the input for the next generation, creating a continuous "flow" effect.
+
+## Recent Updates (Release Notes)
+
+**v1.6.5 (Hotfixes)**
+*   **🛠️ Upscale Reliability:** Fixed an issue where the extension failed to find the Upscale button due to Grok UI changes. It now precisely targets the new "Video Settings" SVG menu and ignores history items.
+*   **🚀 Performance Boost:** Added an 800ms debounce buffer when typing in individual Scene Prompts to completely eliminate popup UI freezing/sluggishness.
+*   **💥 Crash Fix:** Resolved the `Message exceeded maximum allowed size of 64MiB` crash. The extension no longer attempts to send massive Base64 image strings across the Chrome IPC bridge when clicking "Start Generation", and instead reads them directly from local storage.
 
 ## Features
 
@@ -15,10 +22,10 @@ A browser extension to automate video generation loops on [Grok.com](https://gro
 *   **💾 State Persistence:**
     *   **Input Saving:** Your Prompts, Scene counts, and settings are saved automatically.
     *   **Config Presets:** Save and load multiple "Loops" (Settings + Scenes) for easy reuse.
-*   **⇱ Sidebar Workflow:**
-    *   **Native Integration:** Runs directly in the Firefox Sidebar for a seamless experience.
+*   **⇱ Side Panel Workflow:**
+    *   **Native Integration:** Runs directly in the Chrome Side Panel for a seamless experience.
     *   **Optional Dashboard:** Toggle the floating on-page overlay if you prefer a clean view.
-*   **🌍 Multi-Language Support:** Works with Grok in English, Spanish, French, German, Chinese, Japanese, Russian, and Portuguese.
+*   **🌍 Multi-Language Support:** Fully native support for all Grok interface languages via intelligent translation mapping (no hardcoded English).
 *   **🛡️ Anti-Bot Protection:** 
     *   **Fast Human-Like Input:** Randomized timing but optimized for speed (Paste-like insertion).
     *   **Randomized Delays:** Unpredictable wait times to mimic human behavior.
@@ -31,20 +38,21 @@ A browser extension to automate video generation loops on [Grok.com](https://gro
     *   **Resume with Edits:** Edit future prompts while paused, then resume to apply changes dynamically.
     *   **Global Suffix:** Apply a common style or instruction to *every* scene automatically (e.g. "cinematic lighting").
 
-## Installation (Firefox)
+## Installation (Google Chrome)
 
 1.  **Download the Code:**
     *   Clone this repository or download the ZIP file and extract it.
-2.  **Open Debugging Page:**
-    *   Open Firefox.
-    *   Navigate to `about:debugging` (enter this in the URL bar).
-    *   Click on **"This Firefox"** in the left sidebar.
-3.  **Load Temporary Add-on:**
-    *   Click the **"Load Temporary Add-on..."** button.
-    *   Navigate to the `grok-extension-firefox` folder and select the `manifest.json` file.
-4.  **Access the Extension:**
-    *   The extension icon will appear in your toolbar.
-    *   You can also access it via **View → Sidebar → Grok Imagine Loop**.
+2.  **Open Extension Management:**
+    *   Open Google Chrome.
+    *   Navigate to `chrome://extensions/` (enter this in the URL bar).
+3.  **Enable Developer Mode:**
+    *   Toggle the **"Developer mode"** switch in the top-right corner of the page.
+4.  **Load the Extension:**
+    *   Click the **"Load unpacked"** button that appears in the top-left.
+    *   Select the `grok-extension` folder (the folder containing `manifest.json`).
+5.  **Pin the Extension:**
+    *   Click the "Puzzle Piece" icon in your Chrome toolbar.
+    *   Find "Grok Imagine Loop" and click the **Pin** icon to make it easily accessible.
 
 ## Usage
 
@@ -72,11 +80,11 @@ A browser extension to automate video generation loops on [Grok.com](https://gro
 ## Performance & Troubleshooting
 
 ### Loop Pausing / Slowing Down in Background
-If the extension stops or runs very slowly when you switch tabs, you may be hitting **Firefox's Background Tab Throttling**. This is a browser feature to save battery.
+If the extension stops or runs very slowly when you switch tabs, you are hitting **Chrome's Background Tab Throttling**. This is a browser feature to save battery.
 
 **Solutions:**
 1.  **Keep the Tab Visible:** Drag the Grok tab into its own separate window so it remains "visible" on your screen, even if behind other windows.
-2.  **Disable Throttling (Advanced):** In `about:config`, you can adjust `dom.min_background_timeout_value` to reduce throttling for background tabs.
+2.  **Configure Throttling:** Chrome has made it harder to disable this completely. See this discussion for current workarounds: [Reddit Discussion](https://www.reddit.com/r/incremental_games/comments/1isgt0s/did_google_remove_the_ability_to_turn_off_tab/).
 
 ## Support
 
@@ -95,11 +103,10 @@ Please report any issue here. Please include the following information when repo
     *   Go to **Main** tab.
     *   Click **Download** next to Debug Logs.
 3.  **Operating System** (e.g. Ubuntu 24.04 LTS, macOS Sequoia).
-4.  **Browser** (e.g. Firefox Developer Edition, Firefox Nightly).
+4.  **Browser** (e.g. Brave Browser, Chrome).
 5.  **Grok Interface Language** (e.g. English, German).
 
 ## 🚧 Roadmap / Work in Progress
-*   **Active Development:** Multi-Language Support (Expanding translations for specific UI variations).
 *   **TODO:** Ensure all popups are always on top.
 *   **TODO:** Fix persistence/storage optimization.
 

@@ -372,11 +372,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Prompt Input (Individual)
             const textarea = item.querySelector('.scene-prompt');
             textarea.value = scene.prompt;
+            let debounceTimer;
             textarea.addEventListener('input', (e) => {
-                scene.prompt = e.target.value;
                 autoResize(e.target);
-                saveScenes();
-                updateBulkFromScenes(); // Sync back to bulk
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    scene.prompt = e.target.value;
+                    saveScenes();
+                    updateBulkFromScenes(); // Sync back to bulk
+                }, 800); // 800ms debounce
+            });
+
+            // Fallback: save immediately when they leave the field
+            textarea.addEventListener('blur', (e) => {
+                clearTimeout(debounceTimer);
+                if (scene.prompt !== e.target.value) {
+                    scene.prompt = e.target.value;
+                    saveScenes();
+                    updateBulkFromScenes();
+                }
             });
             // Auto-resize textarea
             setTimeout(() => autoResize(textarea), 0);
@@ -1018,7 +1032,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         payload: {
                             scenes: validScenes.map(s => ({
                                 prompt: s.prompt,
-                                inputImage: s.image ? s.image.dataUrl : null
+                                hasImage: !!s.image
                             }))
                         }
                     });
@@ -1077,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // NEW Payload Structure
                 scenes: validScenes.map(s => ({
                     prompt: s.prompt,
-                    inputImage: s.image ? s.image.dataUrl : null
+                    hasImage: !!s.image
                 })),
 
                 // Legacy Backwards Compat
@@ -1085,10 +1099,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 initialImage: null
             };
 
-            // Pass global Initial Image if loaded
+            // Pass global Initial Image flag if loaded
             const previewEl = document.getElementById('restoredImagePreview');
             if (previewEl && previewEl.src && previewEl.style.display !== 'none') {
-                payload.initialImage = previewEl.src;
+                payload.hasInitialImage = true;
             }
 
             statusDiv.innerText = 'Sending command...';
