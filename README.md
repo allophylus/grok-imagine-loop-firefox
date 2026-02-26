@@ -1,15 +1,21 @@
 # Grok Imagine Loop Extension
 
-A Firefox Utility Extension to automate video generation loops on [Grok.com](https://grok.com).
+A Chrome Utility Extension to automate video generation loops on [Grok.com](https://grok.com).
 
 This tool allows you to create seamless video sequences by automatically using the last frame of a generated video as the input for the next generation, creating a continuous "flow" effect.
 
 ## Recent Updates (Release Notes)
 
+**v1.6.6**
+*   **💾 Import/Export Configs:** Added ability to import and export saved configurations (presets) as JSON files. This includes saving the Global Initial Image along with your preset loops!
+*   **🖼️ Smart Resume Export:** When saving a configuration during an active run, any frames automatically extracted from your videos will be included in the export, allowing you to seamlessly pick up where you left off!
+*   **🐛 Crash Fix:** Extracted video frames are now correctly saved as Base64 in local storage during active runs, preventing them from being stripped out (resulting in missing images) when exporting configurations to JSON. 
+*   **✨ UI Refresh:** Redesigned the "Saved Configurations" section in settings for a much cleaner layout with dedicated icon buttons.
+
 **v1.6.5 (Hotfixes)**
 *   **🛠️ Upscale Reliability:** Fixed an issue where the extension failed to find the Upscale button due to Grok UI changes. It now precisely targets the new "Video Settings" SVG menu and ignores history items.
 *   **🚀 Performance Boost:** Added an 800ms debounce buffer when typing in individual Scene Prompts to completely eliminate popup UI freezing/sluggishness.
-*   **💥 Crash Fix:** Resolved the `Message exceeded maximum allowed size of 64MiB` crash. The extension no longer attempts to send massive Base64 image strings across the browser IPC bridge when clicking "Start Generation", and instead reads them directly from local storage.
+*   **💥 Crash Fix:** Resolved the `Message exceeded maximum allowed size of 64MiB` crash. The extension no longer attempts to send massive Base64 image strings across the Chrome IPC bridge when clicking "Start Generation", and instead reads them directly from local storage.
 
 ## Features
 
@@ -24,7 +30,7 @@ This tool allows you to create seamless video sequences by automatically using t
     *   **Input Saving:** Your Prompts, Scene counts, and settings are saved automatically.
     *   **Config Presets:** Save and load multiple "Loops" (Settings + Scenes) for easy reuse.
 *   **⇱ Side Panel Workflow:**
-    *   **Native Integration:** Runs directly in the Firefox Sidebar for a seamless experience.
+    *   **Native Integration:** Runs directly in the Chrome Side Panel for a seamless experience.
     *   **Optional Dashboard:** Toggle the floating on-page overlay if you prefer a clean view.
 *   **🌍 Multi-Language Support:** Fully native support for all Grok interface languages via intelligent translation mapping (no hardcoded English).
 *   **🛡️ Anti-Bot Protection:** 
@@ -39,19 +45,21 @@ This tool allows you to create seamless video sequences by automatically using t
     *   **Resume with Edits:** Edit future prompts while paused, then resume to apply changes dynamically.
     *   **Global Suffix:** Apply a common style or instruction to *every* scene automatically (e.g. "cinematic lighting").
 
-## Installation (Mozilla Firefox)
+## Installation (Google Chrome)
 
 1.  **Download the Code:**
     *   Clone this repository or download the ZIP file and extract it.
-2.  **Open Extension Debugging:**
-    *   Open Mozilla Firefox.
-    *   Navigate to `about:debugging#/runtime/this-firefox` (enter this in the URL bar).
-3.  **Load the Extension:**
-    *   Click the **"Load Temporary Add-on..."** button.
-    *   Select the `manifest.json` file inside the `grok-extension-firefox` folder.
-4.  **Pin the Extension:**
-    *   Click the "Extensions" (Puzzle Piece) icon in your Firefox toolbar.
-    *   Find "Grok Imagine Loop" and click the **Gear** icon, then "Pin to Toolbar" for easy access.
+2.  **Open Extension Management:**
+    *   Open Google Chrome.
+    *   Navigate to `chrome://extensions/` (enter this in the URL bar).
+3.  **Enable Developer Mode:**
+    *   Toggle the **"Developer mode"** switch in the top-right corner of the page.
+4.  **Load the Extension:**
+    *   Click the **"Load unpacked"** button that appears in the top-left.
+    *   Select the `grok-extension` folder (the folder containing `manifest.json`).
+5.  **Pin the Extension:**
+    *   Click the "Puzzle Piece" icon in your Chrome toolbar.
+    *   Find "Grok Imagine Loop" and click the **Pin** icon to make it easily accessible.
 
 ## Usage
 
