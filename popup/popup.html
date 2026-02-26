@@ -7,6 +7,23 @@
 </head>
 
 <body>
+  <div id="debug-error-overlay"
+    style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; z-index:999999; display:none; padding:10px; font-family:monospace; font-size:12px; overflow:auto;">
+  </div>
+  <script>
+    window.addEventListener('error', function (event) {
+      document.getElementById('debug-error-overlay').style.display = 'block';
+      let msg = 'ERROR: ' + event.message + '<br>' + event.filename + ':' + event.lineno;
+      if (event.error && event.error.stack) msg += '<br><br>' + event.error.stack.replace(/\n/g, '<br>');
+      document.getElementById('debug-error-overlay').innerHTML += '<p>' + msg + '</p>';
+    });
+    window.addEventListener('unhandledrejection', function (event) {
+      document.getElementById('debug-error-overlay').style.display = 'block';
+      let msg = 'PROMISE ERROR: ' + event.reason;
+      if (event.reason && event.reason.stack) msg += '<br><br>' + evenreason.stack.replace(/\n/g, '<br>');
+      document.getElementById('debug-error-overlay').innerHTML += '<p>' + msg + '</p>';
+    });
+  </script>
 
   <!-- Tab Header -->
   <div class="tabs-header">
